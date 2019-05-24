@@ -2,7 +2,7 @@
 % Imports csv data exprted with RFFextractor
 % ERG data recorded with protocol: Sine flicker 300 cd/m²: 50-0.3 Hz
 
-function Sin = loadRETevalSin()
+function [Sin, filename] = loadRETevalSin()
 %% Initialize variables.
 [file,path] = uigetfile('*.csv');
 if isequal(file,0)
@@ -22,5 +22,5 @@ fclose(fileID);
 Sin = [dataArray{1:end-1}];
 
 %% Clear temporary variables
-clearvars filename delimiter startRow formatSpec fileID dataArray ans file path;
+clearvars delimiter startRow formatSpec fileID dataArray ans file path;
 end
