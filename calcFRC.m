@@ -25,11 +25,11 @@ clear tmp* mask Response idx
 
 Amps = zeros(size(freqs));
 
-for f = 1:1
+for f = 1:numel(freqs)
     Response = eval(['Sin' freqsS{f} 'hz']);
-    tmpTime = Response(:,1);
+    tmpTime = Response(:,1)/1000; % times are stored in ms, convert to s
     tmpVolt = Response(:,2);
-    
+
     amp = fftRETevalAmp(tmpTime', tmpVolt', freqs(f));
     
     if ~isempty(amp)
@@ -39,7 +39,7 @@ end
 
 %% Plot Frequency Response Profile
 
-figure; hold on;
+figure('Name', 'Frequency Response Profile'); hold on;
 plot(freqs, Amps, '-ok');
 xlabel('Frequency (hz)');
 ylabel('Amplitude (microV)');
