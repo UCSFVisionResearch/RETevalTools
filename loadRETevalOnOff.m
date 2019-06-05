@@ -18,6 +18,8 @@ fileID = fopen(filename,'r');
 dataArray = textscan(fileID, formatSpec, 'Delimiter', delimiter, 'TextType', 'string', 'EmptyValue', NaN, 'HeaderLines', 2, 'ReturnOnError', false, 'EndOfLine', '\r\n');
 fclose(fileID);
 
+
+
 % Create output variable
 OnOff = [dataArray{1:end-1}];
 

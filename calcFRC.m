@@ -43,6 +43,7 @@ figure('Name', 'Frequency Response Profile'); hold on;
 plot(freqs, Amps, '-ok');
 xlabel('Frequency (hz)');
 ylabel('Amplitude (microV)');
+ylim([0,20]);
 
 [filepath,name,ext] = fileparts(filename);
 print([filepath filesep name '-FRCplot.pdf'],'-dpdf','-fillpage');
