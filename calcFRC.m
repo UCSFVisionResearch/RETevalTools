@@ -1,9 +1,9 @@
-% Loads data and calculates the Frequency Response Curve
+%% Loads data and calculates the Frequency Response Curve
 % TODO: debug fftRETevalAmp does not calculate amplitudes for frequencies >0
 
-[Sin, filename] = loadRETevalSin;
+Sin = loadRETevalSin;
 
-% Isolate time/volt of a single response and trim NaN values
+%% Isolate time/volt of a single response and trim NaN values
 % then store them into separate arrays for each frequencies
 
 freqs = [50,45,40,35,30,25,20,15,10,7,5,3,2,1,0.7,0.5,0.3];
@@ -21,7 +21,7 @@ for idx = 1:2:size(Sin,2)
 end
 clear tmp* mask Response idx
 
-% Calculate Frequency Response Profile for each eye
+%% Calculate Frequency Response Profile for each eye
 
 Amps = zeros(size(freqs));
 
@@ -29,24 +29,22 @@ for f = 1:numel(freqs)
     Response = eval(['Sin' freqsS{f} 'hz']);
     tmpTime = Response(:,1)/1000; % times are stored in ms, convert to s
     tmpVolt = Response(:,2);
-
-    amp = fftRETevalAmp(tmpTime', tmpVolt', freqs(f));
     
+    if isempty(tmpVolt)
+        continue
+    end
+    
+    amp = fftRETevalAmp(tmpTime', tmpVolt', freqs(f));
+        
     if ~isempty(amp)
         Amps(f) = amp;
     end
 end
 
-% Plot Frequency Response Profile
+%% Plot Frequency Response Profile
 
 figure('Name', 'Frequency Response Profile'); hold on;
 plot(freqs, Amps, '-ok');
 xlabel('Frequency (hz)');
 ylabel('Amplitude (microV)');
-ylim([0,20]);
-
-[filepath,name,ext] = fileparts(filename);
-print([filepath filesep name '-FRCplot.pdf'],'-dpdf','-fillpage');
-save([filepath filesep name '-FRCdata.mat'], 'Amps', 'freqs'); 
-
-close
+ylim([0 10]);
