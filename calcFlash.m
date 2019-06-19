@@ -87,31 +87,6 @@ if ~isempty(FlickerOS)
     xlabel('Time (ms)');
     ylabel('Amplitude (microV)');
 end
-%% Flash 
-if ~isempty(FlashOD) 
-    TimeOD = FlashOD(:,1);
-    VoltOD = FlashOD(:,2);
-end
-
-if ~isempty(FlashOS) 
-    TimeOS = FlashOS(:,1);
-    VoltOS = FlashOS(:,2);
-end
-
-figure('Name', 'Frequency Response Profile'); hold on;
-subplot(2,1,1)
-if ~isempty(FlashOD)
-    plot(TimeOD, VoltOD, 'k');
-    xlabel('Time (ms)');
-    ylabel('Amplitude (microV)');
-end
-
-subplot(2,1,2)
-if ~isempty(FlashOS)
-    plot(TimeOS, VoltOS, 'k');
-    xlabel('Time (ms)');
-    ylabel('Amplitude (microV)');
-end
 
 %% PHNR 
 if ~isempty(PHNROD) 
