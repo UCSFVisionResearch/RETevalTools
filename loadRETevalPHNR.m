@@ -2,7 +2,7 @@
 % Imports csv data exprted with RFFextractor
 % ERG data recorded with Phnr protacol 
 
-function [PHNR, filename] = loadRETevalPHNR()
+function [FlashOD, FlickerOD, PHNROD, FlashOS, FlickerOS, PHNROS, filename] = loadRETevalPHNR()
 %% Initialize variables.
 [file,path] = uigetfile('*.csv');
 if isequal(file,0)
@@ -19,7 +19,27 @@ dataArray = textscan(fileID, formatSpec, 'Delimiter', delimiter, 'TextType', 'st
 fclose(fileID);
 
 % Create output variable
-PHNR = [dataArray{1:end-1}];
+Total = [dataArray{1:end-1}];
+    if size(Total, 2) > 6
+        TotalOD = Total(:,1:6);
+        TotalOS = Total(:,7:12);
+    else 
+        TotalOD = Total;
+        TotalOS= [];
+    end
+
+% Create individual variables
+if ~isempty(TotalOD)
+    FlashOD = TotalOD(:,1:2);
+    FlickerOD = TotalOD(:,3:4);
+    PHNROD = TotalOD(:,5:6)
+end
+
+if ~isempty(TotalOS)
+    FlashOS = TotalOS(:,1:2);
+    FlickerOS = TotalOS(:,3:4);
+    PHNROS = TotalOS(:,5:6)
+end
 
 %% Clear temporary variables
 clearvars delimiter startRow formatSpec fileID dataArray ans file path;
