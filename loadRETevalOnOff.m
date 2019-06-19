@@ -2,7 +2,7 @@
 % Imports csv data exprted with RFFextractor
 % ERG data recorded with Phnr protacol 
 
-function [OnOff, filename] = loadRETevalOnOff()
+function [OnOffOD, OnOffOS, filename] = loadRETevalOnOff()
 %% Initialize variables.
 [file,path] = uigetfile('*.csv');
 if isequal(file,0)
@@ -22,6 +22,13 @@ fclose(fileID);
 
 % Create output variable
 OnOff = [dataArray{1:end-1}];
+    if size(OnOff, 2) > 2
+        OnOffOD = OnOff(:,1:2);
+        OnOffOS = OnOff(:,3:4);
+    else 
+        OnOffOD = OnOff;
+        OnOffOS= [];
+    end
 
 %% Clear temporary variables
 clearvars delimiter startRow formatSpec fileID dataArray ans file path;
