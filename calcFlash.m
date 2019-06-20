@@ -70,9 +70,9 @@ end
 
 [filepath,name,ext] = fileparts(filename);
 print([filepath filesep name '-Flashplot.pdf'],'-dpdf','-fillpage');
-%save([filepath filesep name '-Flashdata.mat']);
+save([filepath filesep name '-Flashdata.mat']);
 
-%% PHNR 
+% PHNR 
 if ~isempty(PHNROD) 
     TimeOD = PHNROD(:,1);
     VoltOD = PHNROD(:,2);
@@ -96,8 +96,9 @@ locAwaveOD = TimeOD(locsNegOD) < TimeOD(locBwaveOD);
 locAwaveOD = find(locAwaveOD, 1, 'last' );
 locAwaveOD = locsNegOD(locAwaveOD);
 
-% Calculate most minimum peak
-MinwaveOD = TimeOD(locsNegOD) > TimeOD(locBwaveOD);
+% Calculate PHNR. Most minimum peak after first trough from B wave
+MinwaveOD = TimeOD(locsNegOD) > TimeOD(locBwaveOD) & TimeOD(locsNegOD) < 100;
+MinwaveOD(find(MinwaveOD,1)) = 0;
 MinwaveOD = times(MinwaveOD, pksNegOD);
 [ValueMinwaveOD, locMinwaveOD] = max(MinwaveOD);
 locMinwaveOD = locsNegOD(locMinwaveOD);
@@ -112,7 +113,8 @@ locAwaveOS = TimeOS(locsNegOS) < TimeOS(locBwaveOS);
 locAwaveOS = find(locAwaveOS, 1, 'last' );
 locAwaveOS = locsNegOS(locAwaveOS);
 
-MinwaveOS = TimeOS(locsNegOS) > TimeOS(locBwaveOS);
+MinwaveOS = TimeOS(locsNegOS) > TimeOS(locBwaveOS) & TimeOS(locsNegOS) < 100;
+MinwaveOS(find(MinwaveOS,1)) = 0;
 MinwaveOS = times(MinwaveOS, pksNegOS);
 [ValueMinwaveOS, locMinwaveOS] = max(MinwaveOS);
 locMinwaveOS = locsNegOS(locMinwaveOS);
@@ -124,7 +126,7 @@ subplot(2,1,1)
 if ~isempty(PHNROD)
     plot(TimeOD, VoltOD, 'k');
     hold on
-%    scatter(TimeOD(locsPosOD), VoltOD(locsPosOD),'or');
+    %scatter(TimeOD(locsPosOD), VoltOD(locsPosOD),'or');
     %scatter(TimeOD(locsNegOD), VoltOD(locsNegOD),'ob');
     scatter(TimeOD(locAwaveOD), VoltOD(locAwaveOD),'or');
     scatter(TimeOD(locBwaveOD), VoltOD(locBwaveOD),'ob');
@@ -137,8 +139,8 @@ subplot(2,1,2)
 if ~isempty(PHNROS)
     plot(TimeOS, VoltOS, 'k');
     hold on
-%    scatter(TimeOD(locsPosOD), VoltOD(locsPosOD),'or');
-    %scatter(TimeOD(locsNegOS), VoltOD(locsNegOS),'ob');
+    %scatter(TimeOS(locsPosOS), VoltOS(locsPosOS),'or');
+    %scatter(TimeOS(locsNegOS), VoltOS(locsNegOS),'ob');
     scatter(TimeOS(locAwaveOS), VoltOS(locAwaveOS),'or');
     scatter(TimeOS(locBwaveOS), VoltOS(locBwaveOS),'ob');
     scatter(TimeOS(locMinwaveOS), VoltOS(locMinwaveOS), 'og');
