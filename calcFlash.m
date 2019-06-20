@@ -22,18 +22,22 @@ end
 locBwaveOD = locsPosOD(locBwaveOD);
 
 % Calculate A wave as the first negative peak prior to B wave
-locAwaveOD = TimeOD(locsNegOD) < TimeOD(locBwaveOD);
-locAwaveOD = find(locAwaveOD, 1, 'last' );
+locAwaveOD = TimeOD(locsNegOD) < TimeOD(locBwaveOD) & TimeOD(locsNegOD) > 0;
+locAwaveOD = times(locAwaveOD, pksNegOD);
+[~, locAwaveOD] = max(locAwaveOD);
 locAwaveOD = locsNegOD(locAwaveOD);
+%locAwaveOD = find(locAwaveOD, 1, 'last');
+%locAwaveOD = locsNegOD(locAwaveOD);
 
 % Repeat for OS
 [pksPosOS,locsPosOS] = findpeaks(VoltOS);
-[~,locsNegOS] = findpeaks(-VoltOS);
-[ValueBwaveOS, locBwaveOS] = max(pksPosOS);
+[pksNegOS,locsNegOS] = findpeaks(-VoltOS);
+[~, locBwaveOS] = max(pksPosOS);
 locBwaveOS = locsPosOS(locBwaveOS);
 
-locAwaveOS = TimeOS(locsNegOS) < TimeOS(locBwaveOS);
-locAwaveOS = find(locAwaveOS, 1, 'last' );
+locAwaveOS = TimeOS(locsNegOS) < TimeOS(locBwaveOS) & TimeOS(locsNegOS) > 0;
+locAwaveOS = times(locAwaveOS, pksNegOS);
+[~, locAwaveOS] = max(locAwaveOS);
 locAwaveOS = locsNegOS(locAwaveOS);
 
 % graph Flash
@@ -42,8 +46,8 @@ subplot(2,1,1)
 if ~isempty(FlashOD)
     plot(TimeOD, VoltOD, 'k');
     hold on
-%    scatter(TimeOD(locsPosOD), VoltOD(locsPosOD),'or');
-%    scatter(TimeOD(locsNegOD), VoltOD(locsNegOD),'ob');
+    %scatter(TimeOD(locsPosOD), VoltOD(locsPosOD),'or');
+    %scatter(TimeOD(locsNegOD), VoltOD(locsNegOD),'ob');
     scatter(TimeOD(locAwaveOD), VoltOD(locAwaveOD),'or');
     scatter(TimeOD(locBwaveOD), VoltOD(locBwaveOD),'ob');
     xlabel('Time (ms)');
@@ -62,11 +66,13 @@ if ~isempty(FlashOS)
     ylabel('Amplitude (microV)');
 end
 
+% Print Flash 
+
 [filepath,name,ext] = fileparts(filename);
 print([filepath filesep name '-Flashplot.pdf'],'-dpdf','-fillpage');
-save([filepath filesep name '-Flashdata.mat']);
+%save([filepath filesep name '-Flashdata.mat']);
 
-% PHNR 
+%% PHNR 
 if ~isempty(PHNROD) 
     TimeOD = PHNROD(:,1);
     VoltOD = PHNROD(:,2);

@@ -32,13 +32,13 @@ Total = [dataArray{1:end-1}];
 if ~isempty(TotalOD)
     FlashOD = TotalOD(:,1:2);
     FlickerOD = TotalOD(:,3:4);
-    PHNROD = TotalOD(:,5:6)
+    PHNROD = TotalOD(:,5:6);
 end
 
 if ~isempty(TotalOS)
     FlashOS = TotalOS(:,1:2);
     FlickerOS = TotalOS(:,3:4);
-    PHNROS = TotalOS(:,5:6)
+    PHNROS = TotalOS(:,5:6);
 end
 
 %% Clear temporary variables
