@@ -1,9 +1,9 @@
 %% Loads data and calculates the Frequency Response Curve
 % TODO: debug fftRETevalAmp does not calculate amplitudes for frequencies >0
 
-[SinOD, SinOS] = loadRETevalSin;
+[SinOD, SinOS, filename] = loadRETevalSin;
 
-%% Isolate time/volt of a single response and trim NaN values
+% Isolate time/volt of a single response and trim NaN values
 % then store them into separate arrays for each frequencies
 
 freqs = [50,45,40,35,30,25,20,15,10,7,5,3,2,1,0.7,0.5,0.3];
@@ -37,7 +37,7 @@ end
 
 clear tmp* mask Response idx
 
-%% Calculate Frequency Response Profile for each eye
+% Calculate Frequency Response Profile for each eye
 
 AmpsOD = zeros(size(freqs));
 
@@ -75,7 +75,7 @@ for f = 1:numel(freqs)
     end
 end
 
-%% Plot Frequency Response Profile
+% Plot Frequency Response Profile
 
 figure('Name', 'Frequency Response Profile'); hold on;
 subplot(1,2,1)
@@ -93,3 +93,7 @@ if ~isempty(SinOS)
     ylabel('Amplitude (microV)');
     ylim([0 10]);
 end
+
+[filepath,name,ext] = fileparts(filename);
+print([filepath filesep name '-FRCplot.pdf'],'-dpdf','-fillpage');
+save([filepath filesep name '-FRCdata.mat'], 'AmpsOD', 'AmpsOS', 'freqs');

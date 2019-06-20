@@ -2,15 +2,18 @@
 % Imports csv data exprted with RFFextractor
 % ERG data recorded with protocol: Sine flicker 300 cd/m²: 50-0.3 Hz
 
-function [SinOD,SinOS] = loadRETevalSin()
+function [SinOD,SinOS, filename] = loadRETevalSin()
 %% Initialize variables.
 [file,path] = uigetfile('*.csv');
+filename = fullfile(path,file);
 if isequal(file,0)
    disp('User selected Cancel');
    return
 end
 
 if contains(file, 'reported')
+    % Name filename
+    %filename = fullfile(path,file);
     % REPORTED WAVEFORM exported from rffExtractor
     
     % Setup the Import Options
@@ -55,5 +58,5 @@ else
 end
     
 %% Clear temporary variables
-clearvars filename delimiter startRow formatSpec fileID dataArray ans file path opts dataTable;
+clearvars delimiter startRow formatSpec fileID dataArray ans file path opts dataTable;
 end

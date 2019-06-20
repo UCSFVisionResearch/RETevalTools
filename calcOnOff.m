@@ -2,7 +2,7 @@
 
 [OnOffOD, OnOffOS, filename] = loadRETevalOnOff;
 
-%%
+
 if ~isempty(OnOffOD) 
     TimeOD = OnOffOD(:,1);
     VoltOD = OnOffOD(:,2);
@@ -14,7 +14,7 @@ if ~isempty(OnOffOS)
 end
 
 
-%% 
+
 figure('Name', 'Frequency Response Profile'); hold on;
 subplot(2,1,1)
 if ~isempty(OnOffOD)
@@ -29,3 +29,7 @@ if ~isempty(OnOffOS)
     xlabel('Time (ms)');
     ylabel('Amplitude (microV)');
 end
+
+[filepath,name,ext] = fileparts(filename);
+print([filepath filesep name '-plot.pdf'],'-dpdf','-fillpage');
+save([filepath filesep name '-data.mat']);

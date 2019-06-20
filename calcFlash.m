@@ -2,7 +2,7 @@
 
 [FlashOD, FlickerOD, PHNROD, FlashOS, FlickerOS, PHNROS, filename] = loadRETevalPHNR;
 
-%% Flash 
+% Flash 
 if ~isempty(FlashOD) 
     TimeOD = FlashOD(:,1);
     VoltOD = FlashOD(:,2);
@@ -36,7 +36,7 @@ locAwaveOS = TimeOS(locsNegOS) < TimeOS(locBwaveOS);
 locAwaveOS = find(locAwaveOS, 1, 'last' );
 locAwaveOS = locsNegOS(locAwaveOS);
 
-%% graph Flash
+% graph Flash
 figure('Name', 'Frequency Response Profile'); hold on;
 subplot(2,1,1)
 if ~isempty(FlashOD)
@@ -62,33 +62,11 @@ if ~isempty(FlashOS)
     ylabel('Amplitude (microV)');
 end
 
-%% Flicker 
-if ~isempty(FlickerOD) 
-    TimeOD = FlickerOD(:,1);
-    VoltOD = FlickerOD(:,2);
-end
+[filepath,name,ext] = fileparts(filename);
+print([filepath filesep name '-Flashplot.pdf'],'-dpdf','-fillpage');
+save([filepath filesep name '-Flashdata.mat']);
 
-if ~isempty(FlickerOS) 
-    TimeOS = FlickerOS(:,1);
-    VoltOS = FlickerOS(:,2);
-end
-
-figure('Name', 'Frequency Response Profile'); hold on;
-subplot(2,1,1)
-if ~isempty(FlickerOD)
-    plot(TimeOD, VoltOD, 'k');
-    xlabel('Time (ms)');
-    ylabel('Amplitude (microV)');
-end
-
-subplot(2,1,2)
-if ~isempty(FlickerOS)
-    plot(TimeOS, VoltOD, 'k');
-    xlabel('Time (ms)');
-    ylabel('Amplitude (microV)');
-end
-
-%% PHNR 
+% PHNR 
 if ~isempty(PHNROD) 
     TimeOD = PHNROD(:,1);
     VoltOD = PHNROD(:,2);
@@ -113,7 +91,9 @@ locAwaveOD = find(locAwaveOD, 1, 'last' );
 locAwaveOD = locsNegOD(locAwaveOD);
 
 % Calculate most minimum peak
-[ValueMinwaveOD, locMinwaveOD] = max(pksNegOD);
+MinwaveOD = TimeOD(locsNegOD) > TimeOD(locBwaveOD);
+MinwaveOD = times(MinwaveOD, pksNegOD);
+[ValueMinwaveOD, locMinwaveOD] = max(MinwaveOD);
 locMinwaveOD = locsNegOD(locMinwaveOD);
 
 % Repeat for OS
@@ -126,9 +106,12 @@ locAwaveOS = TimeOS(locsNegOS) < TimeOS(locBwaveOS);
 locAwaveOS = find(locAwaveOS, 1, 'last' );
 locAwaveOS = locsNegOS(locAwaveOS);
 
-[ValueMinwaveOS, locMinwaveOS] = max(pksNegOS);
+MinwaveOS = TimeOS(locsNegOS) > TimeOS(locBwaveOS);
+MinwaveOS = times(MinwaveOS, pksNegOS);
+[ValueMinwaveOS, locMinwaveOS] = max(MinwaveOS);
 locMinwaveOS = locsNegOS(locMinwaveOS);
-%% Graph PHNR
+
+% Graph PHNR
 
 figure('Name', 'Frequency Response Profile'); hold on;
 subplot(2,1,1)
@@ -153,6 +136,37 @@ if ~isempty(PHNROS)
     scatter(TimeOS(locAwaveOS), VoltOS(locAwaveOS),'or');
     scatter(TimeOS(locBwaveOS), VoltOS(locBwaveOS),'ob');
     scatter(TimeOS(locMinwaveOS), VoltOS(locMinwaveOS), 'og');
+    xlabel('Time (ms)');
+    ylabel('Amplitude (microV)');
+end
+
+% Print PHNR
+[filepath,name,ext] = fileparts(filename);
+print([filepath filesep name '-PHNRplot.pdf'],'-dpdf','-fillpage');
+save([filepath filesep name '-PHNRdata.mat']);
+
+%% Flicker 
+if ~isempty(FlickerOD) 
+    TimeOD = FlickerOD(:,1);
+    VoltOD = FlickerOD(:,2);
+end
+
+if ~isempty(FlickerOS) 
+    TimeOS = FlickerOS(:,1);
+    VoltOS = FlickerOS(:,2);
+end
+
+figure('Name', 'Frequency Response Profile'); hold on;
+subplot(2,1,1)
+if ~isempty(FlickerOD)
+    plot(TimeOD, VoltOD, 'k');
+    xlabel('Time (ms)');
+    ylabel('Amplitude (microV)');
+end
+
+subplot(2,1,2)
+if ~isempty(FlickerOS)
+    plot(TimeOS, VoltOD, 'k');
     xlabel('Time (ms)');
     ylabel('Amplitude (microV)');
 end
