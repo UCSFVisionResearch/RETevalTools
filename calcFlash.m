@@ -2,7 +2,95 @@
 
 [FlashOD, FlickerOD, PHNROD, FlashOS, FlickerOS, PHNROS, filename] = loadRETevalPHNR;
 
-% Flash 
+%% Flicker 
+if ~isempty(FlickerOD) 
+    TimeOD = FlickerOD(:,1);
+    VoltOD = FlickerOD(:,2);
+end
+
+if ~isempty(FlickerOS) 
+    TimeOS = FlickerOS(:,1);
+    VoltOS = FlickerOS(:,2);
+end
+
+% Calculate Amplitudes
+[pksPosOD,locsPosOD] = findpeaks(VoltOD);
+[pksNegOD,locsNegOD] = findpeaks(-VoltOD);
+
+%% Split into three sections
+FirstTimeOD = times((TimeOD < 40), VoltOD);
+SecondTimeOD = times((TimeOD > 40 & TimeOD < 80), VoltOD);
+ThirdTimeOD = times((TimeOD > 80 & TimeOD < 120), VoltOD);
+FirstVoltOD = times((TimeOD < 40), VoltOD);
+SecondVoltOD = times((TimeOD > 40 & TimeOD < 80), VoltOD);
+ThirdVoltOD = times((TimeOD > 80 & TimeOD < 120), VoltOD);
+
+[firstpksPosOD,firstlocsPosOD] = findpeaks(FirstVoltOD);
+[secondpksPosOD,secondlocsPosOD] = findpeaks(SecondVoltOD);
+[thirdpksPosOD,thirdlocsPosOD] = findpeaks(ThirdVoltOD);
+[firstpksNegOD,firstlocsNegOD] = findpeaks(-FirstVoltOD);
+[secondpksNegOD,secondlocsNegOD] = findpeaks(-SecondVoltOD);
+[thirdpksNegOD,thirdlocsNegOD] = findpeaks(-ThirdVoltOD);
+
+
+[firstlocBwaveOD, firstlocAwaveOD] = ABwave(firstpksPosOD, firstpksNegOD, firstlocsPosOD, firstlocsNegOD, TimeOD, VoltOD);
+[secondlocBwaveOD, secondlocAwaveOD] = ABwave(secondpksPosOD, secondpksNegOD, secondlocsPosOD, secondlocsNegOD, TimeOD, VoltOD);
+[thirdlocBwaveOD, thirdlocAwaveOD] = ABwave(thirdpksPosOD, thirdpksNegOD, thirdlocsPosOD, thirdlocsNegOD, TimeOD, VoltOD);
+
+% Repeat for left eye
+FirstTimeOS = times((TimeOS < 40), VoltOS);
+SecondTimeOS = times((TimeOS > 40 & TimeOS < 80), VoltOS);
+ThirdTimeOS = times((TimeOS > 80 & TimeOS < 120), VoltOS);
+FirstVoltOS = times((TimeOS < 40), VoltOS);
+SecondVoltOS = times((TimeOS > 40 & TimeOS < 80), VoltOS);
+ThirdVoltOS = times((TimeOS > 80 & TimeOS < 120), VoltOS);
+
+[firstpksPosOS,firstlocsPosOS] = findpeaks(FirstVoltOS);
+[secondpksPosOS,secondlocsPosOS] = findpeaks(SecondVoltOS);
+[thirdpksPosOS,thirdlocsPosOS] = findpeaks(ThirdVoltOS);
+[firstpksNegOS,firstlocsNegOS] = findpeaks(-FirstVoltOS);
+[secondpksNegOS,secondlocsNegOS] = findpeaks(-SecondVoltOS);
+[thirdpksNegOS,thirdlocsNegOS] = findpeaks(-ThirdVoltOS);
+
+
+[firstlocBwaveOS, firstlocAwaveOS] = ABwave(firstpksPosOS, firstpksNegOS, firstlocsPosOS, firstlocsNegOS, TimeOS, VoltOS);
+[secondlocBwaveOS, secondlocAwaveOS] = ABwave(secondpksPosOS, secondpksNegOS, secondlocsPosOS, secondlocsNegOS, TimeOS, VoltOS);
+[thirdlocBwaveOS, thirdlocAwaveOS] = ABwave(thirdpksPosOS, thirdpksNegOS, thirdlocsPosOS, thirdlocsNegOS, TimeOS, VoltOS);
+
+
+%% Graph
+figure('Name', 'Frequency Response Profile'); hold on;
+subplot(2,1,1)
+if ~isempty(FlickerOD)
+    plot(TimeOD, VoltOD, 'k');
+    hold on
+    %scatter(TimeOD(locsPosOD), VoltOD(locsPosOD),'or');
+    %scatter(TimeOD(locsNegOD), VoltOD(locsNegOD),'ob');
+    scatter(TimeOD(firstlocBwaveOD), VoltOD(firstlocBwaveOD),'or');
+    scatter(TimeOD(firstlocAwaveOD), VoltOD(firstlocAwaveOD),'ob');
+    scatter(TimeOD(secondlocBwaveOD), VoltOD(secondlocBwaveOD),'or');
+    scatter(TimeOD(secondlocAwaveOD), VoltOD(secondlocAwaveOD),'ob');
+    scatter(TimeOD(thirdlocBwaveOD), VoltOD(thirdlocBwaveOD),'or');
+    scatter(TimeOD(thirdlocAwaveOD), VoltOD(thirdlocAwaveOD),'ob');
+    xlabel('Time (ms)');
+    ylabel('Amplitude (microV)');
+end
+
+subplot(2,1,2)
+if ~isempty(FlickerOS)
+    plot(TimeOS, VoltOS, 'k');
+    hold on
+    scatter(TimeOS(firstlocBwaveOS), VoltOS(firstlocBwaveOS),'or');
+    scatter(TimeOS(firstlocAwaveOS), VoltOS(firstlocAwaveOS),'ob');
+    scatter(TimeOS(secondlocBwaveOS), VoltOS(secondlocBwaveOS),'or');
+    scatter(TimeOS(secondlocAwaveOS), VoltOS(secondlocAwaveOS),'ob');
+    scatter(TimeOS(thirdlocBwaveOS), VoltOS(thirdlocBwaveOS),'or');
+    scatter(TimeOS(thirdlocAwaveOS), VoltOS(thirdlocAwaveOS),'ob');
+    xlabel('Time (ms)');
+    ylabel('Amplitude (microV)');
+end
+
+%% Flash 
 if ~isempty(FlashOD) 
     TimeOD = FlashOD(:,1);
     VoltOD = FlashOD(:,2);
@@ -18,7 +106,7 @@ end
 [pksNegOD,locsNegOD] = findpeaks(-VoltOD);
 
 % First calculate B wave as maximum positive peak
-[ValueBwaveOD, locBwaveOD] = max(pksPosOD);
+[~, locBwaveOD] = max(pksPosOD);
 locBwaveOD = locsPosOD(locBwaveOD);
 
 % Calculate A wave as the first negative peak prior to B wave
@@ -153,28 +241,4 @@ end
 print([filepath filesep name '-PHNRplot.pdf'],'-dpdf','-fillpage');
 save([filepath filesep name '-PHNRdata.mat']);
 
-%% Flicker 
-if ~isempty(FlickerOD) 
-    TimeOD = FlickerOD(:,1);
-    VoltOD = FlickerOD(:,2);
-end
 
-if ~isempty(FlickerOS) 
-    TimeOS = FlickerOS(:,1);
-    VoltOS = FlickerOS(:,2);
-end
-
-figure('Name', 'Frequency Response Profile'); hold on;
-subplot(2,1,1)
-if ~isempty(FlickerOD)
-    plot(TimeOD, VoltOD, 'k');
-    xlabel('Time (ms)');
-    ylabel('Amplitude (microV)');
-end
-
-subplot(2,1,2)
-if ~isempty(FlickerOS)
-    plot(TimeOS, VoltOD, 'k');
-    xlabel('Time (ms)');
-    ylabel('Amplitude (microV)');
-end
