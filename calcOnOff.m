@@ -33,10 +33,10 @@ locAwaveOD = locsNegOD(locAwaveOD);
 PostBwaveOD = TimeOD(locsNegOD) > TimeOD(locBwaveOD);
 PostBwaveOD = times(PostBwaveOD, pksNegOD);
 [~, PostBwaveOD] = max(PostBwaveOD);
-locB2waveOD = TimeOD(locsPosOD) > TimeOD(locsNegOD(PostBwaveOD)) & TimeOD(locsPosOD) < 300;
-locB2waveOD = times(locB2waveOD, pksPosOD);
-[~, locB2waveOD] = max(locB2waveOD);
-locB2waveOD = locsPosOD(locB2waveOD);
+locDwaveOD = TimeOD(locsPosOD) > TimeOD(locsNegOD(PostBwaveOD)) & TimeOD(locsPosOD) < 300;
+locDwaveOD = times(locDwaveOD, pksPosOD);
+[~, locDwaveOD] = max(locDwaveOD);
+locDwaveOD = locsPosOD(locDwaveOD);
 
 % Repeat for OS
 [pksPosOS,locsPosOS] = findpeaks(VoltOS);
@@ -53,13 +53,36 @@ locAwaveOS = locsNegOS(locAwaveOS);
 PostBwaveOS = TimeOS(locsNegOS) > TimeOS(locBwaveOS);
 PostBwaveOS = times(PostBwaveOS, pksNegOS);
 [~, PostBwaveOS] = max(PostBwaveOS);
-locB2waveOS = TimeOS(locsPosOS) > TimeOS(locsNegOS(PostBwaveOS)) & TimeOS(locsPosOS) < 300;
-locB2waveOS = times(locB2waveOS, pksPosOS);
-[~, locB2waveOS] = max(locB2waveOS);
-locB2waveOS = locsPosOS(locB2waveOS);
+locDwaveOS = TimeOS(locsPosOS) > TimeOS(locsNegOS(PostBwaveOS)) & TimeOS(locsPosOS) < 300;
+locDwaveOS = times(locDwaveOS, pksPosOS);
+[~, locDwaveOS] = max(locDwaveOS);
+locDwaveOS = locsPosOS(locDwaveOS);
+
+% Calculate
+stimulusoffOD = TimeOD > 209.4 & TimeOD < 209.5;
+stimulusoffOD = times(stimulusoffOD, VoltOD);
+stimulusoffOS = TimeOS > 209.4 & TimeOS < 209.5;
+stimulusoffOS = times(stimulusoffOS, VoltOS);
+
+AwaveOD = -VoltOD(locAwaveOD);
+BwaveOD = plus(VoltOD(locBwaveOD), AwaveOD);
+DwaveOD = plus(VoltOD(locDwaveOD), abs(max(stimulusoffOD)));
+
+AwaveOS = -VoltOS(locAwaveOS);
+BwaveOS = plus(VoltOS(locBwaveOS), AwaveOS);
+DwaveOS = plus(VoltOS(locDwaveOS), abs(max(stimulusoffOS)));
+
+AtimeOD = TimeOD(locAwaveOD);
+BtimeOD = TimeOD(locBwaveOD);
+DtimeOD = TimeOD(locDwaveOD);
+
+AtimeOS = TimeOS(locAwaveOS);
+BtimeOS = TimeOS(locBwaveOS);
+DtimeOS = TimeOS(locDwaveOS);
+
 
 % Plot graph 
-figure('Name', 'Frequency Response Profile'); hold on;
+figure('Name', 'Frequency Response Profile', 'visible', 'off'); hold on;
 subplot(2,1,1)
 if ~isempty(OnOffOD)
     plot(TimeOD, VoltOD, 'k');
@@ -68,7 +91,8 @@ if ~isempty(OnOffOD)
     %scatter(TimeOD(locsNegOD), VoltOD(locsNegOD),'ob');
     scatter(TimeOD(locAwaveOD), VoltOD(locAwaveOD),'or');
     scatter(TimeOD(locBwaveOD), VoltOD(locBwaveOD),'ob');
-    scatter(TimeOD(locB2waveOD), VoltOD(locB2waveOD), 'og');
+    %scatter(TimeOD(450), VoltOD(450), 'o')
+    scatter(TimeOD(locDwaveOD), VoltOD(locDwaveOD), 'og');
     xlabel('Time (ms)');
     ylabel('Amplitude (microV)');
 end
@@ -81,12 +105,12 @@ if ~isempty(OnOffOS)
     %scatter(TimeOS(locsNegOS), VoltOS(locsNegOS),'ob');
     scatter(TimeOS(locAwaveOS), VoltOS(locAwaveOS),'or');
     scatter(TimeOS(locBwaveOS), VoltOS(locBwaveOS),'ob');
-    scatter(TimeOS(locB2waveOS), VoltOS(locB2waveOS), 'og');
+    scatter(TimeOS(locDwaveOS), VoltOS(locDwaveOS), 'og');
     xlabel('Time (ms)');
     ylabel('Amplitude (microV)');
 end
 
-%%
+%
 [filepath,name,ext] = fileparts(filename);
 print([filepath filesep name '-plot.pdf'],'-dpdf','-fillpage');
-save([filepath filesep name '-data.mat']);
+save([filepath filesep name '-data.mat'], 'AwaveOD', 'BwaveOD', 'DwaveOD', 'AtimeOD', 'BtimeOD', 'DtimeOD',  'AwaveOS', 'BwaveOS', 'DwaveOS', 'AtimeOS', 'BtimeOS', 'DtimeOS');

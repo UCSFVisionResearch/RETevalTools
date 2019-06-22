@@ -141,10 +141,10 @@ PTOS = plus(BwaveOS, BTOS);
 RatioPHNROS = PTOS/BwaveOS;
 
 AtimeOD = timeOD(locAwaveOD);
-BtimeOD = timeOD(locBwaveOD):
+BtimeOD = timeOD(locBwaveOD);
 PHNRtimeOD = timeOD(locMinwaveOD);
 AtimeOS = timeOS(locAwaveOS);
-BtimeOS = timeOS(locBwaveOS):
+BtimeOS = timeOS(locBwaveOS);
 PHNRtimeOS = timeOS(locMinwaveOS);
 
 
