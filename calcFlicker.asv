@@ -18,7 +18,16 @@ if ~isempty(FlickerOS)
     VoltOS = FlickerOS(:,2);
     VoltOS = VoltOS(~mask(:,1));
 end
-clear mask
+
+%% Use FFT
+% Convert time to seconds
+if ~isempty(FlickerOD)
+    AmpODFFT = fftRETevalAmp(TimeOF/1000, VoltOD, 28); %FFT
+end
+if ~isempty(FlickerOS)
+    TimeSecOS = TimeOS(:,1)/1000;
+    AmpOSFFT = fftRETevalAmp(TimeSecOS, VoltOS, 28); %FFT
+end
 
 %% Split into three sections
 if ~isempty(FlickerOD)
@@ -47,9 +56,8 @@ if ~isempty(FlickerOD)
     x = minus(VoltOD(firstlocBwaveOD),  VoltOD(firstlocAwaveOD));
     y = minus(VoltOD(secondlocBwaveOD), VoltOD(secondlocAwaveOD));
     z = minus(VoltOD(thirdlocBwaveOD),  VoltOD(thirdlocAwaveOD));
-    AmpOD = [x, y, z]; % individual peak-to-peak amplitudes in time domain
-    AmpODavg = mean(AmpOD); % average peak-to-peak amplitude in time domain
-    AmpODfft = fftRETevalAmp(TimeOD/1000, VoltOD, 28); %1st harmonic amplitude
+    AmpOD = [x, y, z];
+    AvgAmpOD = mean(AmpOD);    
 end
 
 % Repeat for left eye
@@ -80,12 +88,10 @@ if ~isempty(FlickerOS)
     x = minus(VoltOS(firstlocBwaveOS),  VoltOD(firstlocAwaveOS));
     y = minus(VoltOS(secondlocBwaveOS), VoltOD(secondlocAwaveOS));
     z = minus(VoltOS(thirdlocBwaveOS),  VoltOD(thirdlocAwaveOS));
-    AmpOS = [x, y, z]; % individual peak-to-peak amplitude in time domain
-    AmpOSavg = mean(AmpOS); % average peak-to-peak amplitude in time domain
-    AmpOSfft = fftRETevalAmp(TimeOS/1000, VoltOS, 28); %1st harmonic amplitude
+    AmpOS = [x, y, z];
+    AvgAmpOS = mean(AmpOS);
 end
-
-%% Plot responses in time and circle peaks locations 'visible','off'
+%% Graph 'visible','off'
 figure('Name', 'Frequency Response Profile'); hold on;
 subplot(2,1,1)
 if ~isempty(FlickerOD)
@@ -93,12 +99,12 @@ if ~isempty(FlickerOD)
     hold on
     %scatter(TimeOD(locsPosOD), VoltOD(locsPosOD),'or');
     %scatter(TimeOD(locsNegOD), VoltOD(locsNegOD),'ob');
-    scatter(TimeOD(firstlocBwaveOD),    VoltOD(firstlocBwaveOD),'or');
-    scatter(TimeOD(firstlocAwaveOD),    VoltOD(firstlocAwaveOD),'ob');
-    scatter(TimeOD(secondlocBwaveOD),   VoltOD(secondlocBwaveOD),'or');
-    scatter(TimeOD(secondlocAwaveOD),   VoltOD(secondlocAwaveOD),'ob');
-    scatter(TimeOD(thirdlocBwaveOD),    VoltOD(thirdlocBwaveOD),'or');
-    scatter(TimeOD(thirdlocAwaveOD),    VoltOD(thirdlocAwaveOD),'ob');
+    scatter(TimeOD(firstlocBwaveOD), VoltOD(firstlocBwaveOD),'or');
+    scatter(TimeOD(firstlocAwaveOD), VoltOD(firstlocAwaveOD),'ob');
+    scatter(TimeOD(secondlocBwaveOD), VoltOD(secondlocBwaveOD),'or');
+    scatter(TimeOD(secondlocAwaveOD), VoltOD(secondlocAwaveOD),'ob');
+    scatter(TimeOD(thirdlocBwaveOD), VoltOD(thirdlocBwaveOD),'or');
+    scatter(TimeOD(thirdlocAwaveOD), VoltOD(thirdlocAwaveOD),'ob');
     xlabel('Time (ms)');
     ylabel('Amplitude (microV)');
 end
@@ -107,17 +113,18 @@ subplot(2,1,2)
 if ~isempty(FlickerOS)
     plot(TimeOS, VoltOS, 'k');
     hold on
-    scatter(TimeOS(firstlocBwaveOS),    VoltOS(firstlocBwaveOS),'or');
-    scatter(TimeOS(firstlocAwaveOS),    VoltOS(firstlocAwaveOS),'ob');
-    scatter(TimeOS(secondlocBwaveOS),   VoltOS(secondlocBwaveOS),'or');
-    scatter(TimeOS(secondlocAwaveOS),   VoltOS(secondlocAwaveOS),'ob');
-    scatter(TimeOS(thirdlocBwaveOS),    VoltOS(thirdlocBwaveOS),'or');
-    scatter(TimeOS(thirdlocAwaveOS),    VoltOS(thirdlocAwaveOS),'ob');
+    scatter(TimeOS(firstlocBwaveOS), VoltOS(firstlocBwaveOS),'or');
+    scatter(TimeOS(firstlocAwaveOS), VoltOS(firstlocAwaveOS),'ob');
+    scatter(TimeOS(secondlocBwaveOS), VoltOS(secondlocBwaveOS),'or');
+    scatter(TimeOS(secondlocAwaveOS), VoltOS(secondlocAwaveOS),'ob');
+    scatter(TimeOS(thirdlocBwaveOS), VoltOS(thirdlocBwaveOS),'or');
+    scatter(TimeOS(thirdlocAwaveOS), VoltOS(thirdlocAwaveOS),'ob');
     xlabel('Time (ms)');
     ylabel('Amplitude (microV)');
 end
 
-% Save data and plots to disk
+% Print Flicker 
+
 [filepath,name,ext] = fileparts(filename);
-print([filepath filesep name '-Flicker28hzPlot.pdf'],'-dpdf','-fillpage');
-save([filepath filesep name '-Flicker28hzData.mat'], 'Amp*');
+print([filepath filesep name '-Flashplot.pdf'],'-dpdf','-fillpage');
+save([filepath filesep name '-Flashdata.mat'], 'AvgAmpOD', 'AvgAmpOS');

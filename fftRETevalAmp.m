@@ -16,10 +16,10 @@ function amp = fftRETevalAmp(t, signal, freq)
     % The amplitudes are not exactly at 0.7 and 1, as expected, because of the added noise.
     f = Fs*(0:(L/2))/L;
 
-    %plot(f,P1) 
-    %title('Single-Sided Amplitude Spectrum of X(t)')
-    %xlabel('f (Hz)')
-    %ylabel('|P1(f)|')
+%     plot(f,P1) 
+%     title('Single-Sided Amplitude Spectrum of X(t)')
+%     xlabel('f (Hz)')
+%     ylabel('|P1(f)|')
 
     if freq < 1
         amp = P1(round(f,2) == freq);
