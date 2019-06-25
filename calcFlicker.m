@@ -1,5 +1,5 @@
+function [OD, OS] = calcFlicker(PlotAndSave)
 %% Load data
-
 [~, FlickerOD, ~, ~, FlickerOS, ~, filename] = loadRETevalPHNR;
 
 %% Extract response to Flicker 28Hz stimulation and trim NaN values 
@@ -85,39 +85,63 @@ if ~isempty(FlickerOS)
     AmpOSfft = fftRETevalAmp(TimeOS/1000, VoltOS, 28); %1st harmonic amplitude
 end
 
-%% Plot responses in time and circle peaks locations 'visible','off'
-figure('Name', 'Frequency Response Profile'); hold on;
-subplot(2,1,1)
+%% Generate a structure containing all analyzed data
 if ~isempty(FlickerOD)
-    plot(TimeOD, VoltOD, 'k');
-    hold on
-    %scatter(TimeOD(locsPosOD), VoltOD(locsPosOD),'or');
-    %scatter(TimeOD(locsNegOD), VoltOD(locsNegOD),'ob');
-    scatter(TimeOD(firstlocBwaveOD),    VoltOD(firstlocBwaveOD),'or');
-    scatter(TimeOD(firstlocAwaveOD),    VoltOD(firstlocAwaveOD),'ob');
-    scatter(TimeOD(secondlocBwaveOD),   VoltOD(secondlocBwaveOD),'or');
-    scatter(TimeOD(secondlocAwaveOD),   VoltOD(secondlocAwaveOD),'ob');
-    scatter(TimeOD(thirdlocBwaveOD),    VoltOD(thirdlocBwaveOD),'or');
-    scatter(TimeOD(thirdlocAwaveOD),    VoltOD(thirdlocAwaveOD),'ob');
-    xlabel('Time (ms)');
-    ylabel('Amplitude (microV)');
+    OD          = struct;
+    OD.Time     = TimeOD;
+    OD.Volt     = VoltOD;
+    OD.Amps     = AmpOD;
+    OD.AmpAvg   = AmpODavg;
+    OD.AmpFFT   = AmpODfft;
+else
+    FlickerOD = [];
 end
 
-subplot(2,1,2)
 if ~isempty(FlickerOS)
-    plot(TimeOS, VoltOS, 'k');
-    hold on
-    scatter(TimeOS(firstlocBwaveOS),    VoltOS(firstlocBwaveOS),'or');
-    scatter(TimeOS(firstlocAwaveOS),    VoltOS(firstlocAwaveOS),'ob');
-    scatter(TimeOS(secondlocBwaveOS),   VoltOS(secondlocBwaveOS),'or');
-    scatter(TimeOS(secondlocAwaveOS),   VoltOS(secondlocAwaveOS),'ob');
-    scatter(TimeOS(thirdlocBwaveOS),    VoltOS(thirdlocBwaveOS),'or');
-    scatter(TimeOS(thirdlocAwaveOS),    VoltOS(thirdlocAwaveOS),'ob');
-    xlabel('Time (ms)');
-    ylabel('Amplitude (microV)');
+    OS          = struct;
+    OS.Time     = TimeOS;
+    OS.Volt     = VoltOS;
+    OS.Amps     = AmpOS;
+    OS.AmpAvg   = AmpOSavg;
+    OS.AmpFFT   = AmpOSfft;
 end
 
-% Save data and plots to disk
-[filepath,name,ext] = fileparts(filename);
-print([filepath filesep name '-Flicker28hzPlot.pdf'],'-dpdf','-fillpage');
-save([filepath filesep name '-Flicker28hzData.mat'], 'Amp*');
+%% Plot responses in time and circle peaks locations 'visible','off'
+if exist('PlotAndSave', 'var') && PlotAndSave
+    figure('Name', 'Frequency Response Profile'); hold on;
+    subplot(2,1,1)
+    if ~isempty(FlickerOD)
+        plot(TimeOD, VoltOD, 'k');
+        hold on
+        %scatter(TimeOD(locsPosOD), VoltOD(locsPosOD),'or');
+        %scatter(TimeOD(locsNegOD), VoltOD(locsNegOD),'ob');
+        scatter(TimeOD(firstlocBwaveOD),    VoltOD(firstlocBwaveOD),'or');
+        scatter(TimeOD(firstlocAwaveOD),    VoltOD(firstlocAwaveOD),'ob');
+        scatter(TimeOD(secondlocBwaveOD),   VoltOD(secondlocBwaveOD),'or');
+        scatter(TimeOD(secondlocAwaveOD),   VoltOD(secondlocAwaveOD),'ob');
+        scatter(TimeOD(thirdlocBwaveOD),    VoltOD(thirdlocBwaveOD),'or');
+        scatter(TimeOD(thirdlocAwaveOD),    VoltOD(thirdlocAwaveOD),'ob');
+        xlabel('Time (ms)');
+        ylabel('Amplitude (microV)');
+    end
+    
+    subplot(2,1,2)
+    if ~isempty(FlickerOS)
+        plot(TimeOS, VoltOS, 'k');
+        hold on
+        scatter(TimeOS(firstlocBwaveOS),    VoltOS(firstlocBwaveOS),'or');
+        scatter(TimeOS(firstlocAwaveOS),    VoltOS(firstlocAwaveOS),'ob');
+        scatter(TimeOS(secondlocBwaveOS),   VoltOS(secondlocBwaveOS),'or');
+        scatter(TimeOS(secondlocAwaveOS),   VoltOS(secondlocAwaveOS),'ob');
+        scatter(TimeOS(thirdlocBwaveOS),    VoltOS(thirdlocBwaveOS),'or');
+        scatter(TimeOS(thirdlocAwaveOS),    VoltOS(thirdlocAwaveOS),'ob');
+        xlabel('Time (ms)');
+        ylabel('Amplitude (microV)');
+    end
+    
+    % Save data and plots to disk
+    [filepath,name,~] = fileparts(filename);
+    print([filepath filesep name '-Flicker28hzPlot.pdf'],'-dpdf','-fillpage');
+    save([filepath filesep name '-Flicker28hzData.mat'], 'OD', 'OS');
+end
+end
