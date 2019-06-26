@@ -4,14 +4,21 @@
 
 %% PHNR 
 if ~isempty(PHNROD) 
+    mask = isnan(PHNROD);
     TimeOD = PHNROD(:,1);
+    TimeOD = TimeOD(~mask(:,2));
     VoltOD = PHNROD(:,2);
+    VoltOD = VoltOD(~mask(:,1));
 end
 
 if ~isempty(PHNROS) 
+    mask = isnan(PHNROS);
     TimeOS = PHNROS(:,1);
+    TimeOS = TimeOS(~mask(:,2));
     VoltOS = PHNROS(:,2);
+    VoltOS = VoltOS(~mask(:,1));
 end
+clear mask
 
 % Calculate A and B wave peaks
 [pksPosOD,locsPosOD] = findpeaks(VoltOD);

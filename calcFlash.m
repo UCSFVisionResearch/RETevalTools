@@ -4,14 +4,21 @@
 
 %% Flash 
 if ~isempty(FlashOD) 
+    mask = isnan(FlashOD);
     TimeOD = FlashOD(:,1);
+    TimeOD = TimeOD(~mask(:,2));
     VoltOD = FlashOD(:,2);
+    VoltOD = VoltOD(~mask(:,1));
 end
 
 if ~isempty(FlashOS) 
+    mask = isnan(FlashOS)
     TimeOS = FlashOS(:,1);
+    TimeOS = TimeOS(~mask(:,2));
     VoltOS = FlashOS(:,2);
+    VoltOS = VoltOS(~mask(:,1));
 end
+clear mask
 
 % Calculate A and B wave peaks
 [pksPosOD,locsPosOD] = findpeaks(VoltOD);

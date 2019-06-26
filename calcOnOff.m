@@ -4,14 +4,21 @@
 
 
 if ~isempty(OnOffOD) 
+    mask = isnan(OnOffOD);
     TimeOD = OnOffOD(:,1);
+    TimeOD = TimeOD(~mask(:,2));
     VoltOD = OnOffOD(:,2);
+    VoltOD = VoltOD(~mask(:,1));
 end
 
 if ~isempty(OnOffOS) 
+    mask = isnan(OnOffOS);
     TimeOS = OnOffOS(:,1);
+    TimeOS = TimeOS(~mask(:,2));
     VoltOS = OnOffOS(:,2);
+    VoltOS = VoltOS(~mask(:,1));
 end
+clear mask
 
 % Calculate A and B waves
 [pksPosOD,locsPosOD] = findpeaks(VoltOD);
