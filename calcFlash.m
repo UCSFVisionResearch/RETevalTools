@@ -56,6 +56,30 @@ BtimeOD = timeOD(locBwaveOD):
 AtimeOS = timeOS(locAwaveOS);
 BtimeOS = timeOS(locBwaveOS):
 
+if ~isempty(FlashOD)
+    OD          = struct;
+    OD.Time     = TimeOD;
+    OD.Volt     = VoltOD;
+    OD.Awave    = AwaveOD;
+    OD.Atime    = AtimeOD;
+    OD.Bwave    = BwaveOD;
+    OD.Btime    = BtimeOD;
+else
+    FlashOD = [];
+end
+
+if ~isempty(FlashOS)
+    OS          = struct;
+    OS.Time     = TimeOS;
+    OS.Volt     = VoltOS;
+    OS.Awave    = AwaveOS;
+    OS.Atime    = AtimeOS;
+    OS.Bwave    = BwaveOS;
+    OS.Btime    = BtimeOS;
+else 
+    FlashOS = [];
+end
+
 % graph Flash 
 figure('Name', 'Frequency Response Profile','visible','off'); hold on;
 subplot(2,1,1)

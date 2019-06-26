@@ -75,6 +75,23 @@ for f = 1:numel(freqs)
     end
 end
 
+% Save data
+if ~isempty(SinOD)
+    OD          = struct;
+    OD.Amps     = AmpsOD;
+    OD.freqs    = freqs;
+else
+    SinOD = [];
+end
+
+if ~isempty(SinOS)
+    OS          = struct;
+    OS.Amps     = AmpsOS;
+    OS.freqs    = freqs;
+else 
+    SinOS = [];
+end
+
 % Plot Frequency Response Profile
 
 figure('Name', 'Frequency Response Profile'); hold on;

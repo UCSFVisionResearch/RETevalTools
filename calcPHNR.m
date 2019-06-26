@@ -75,6 +75,37 @@ AtimeOS = timeOS(locAwaveOS);
 BtimeOS = timeOS(locBwaveOS);
 PHNRtimeOS = timeOS(locMinwaveOS);
 
+if ~isempty(PHNROD)
+    OD          = struct;
+    OD.Time     = TimeOD;
+    OD.Volt     = VoltOD;
+    OD.Awave    = AwaveOD;
+    OD.Atime    = AtimeOD;
+    OD.Bwave    = BwaveOD;
+    OD.Btime    = BtimeOD;
+    OD.BT       = BTOD;
+    OD.PT       = PTOD;
+    OD.RatioPHNR= RatioPHNROD;
+    OD.PHNRtime = PHNRtimeOD;
+else
+    PHNROD = [];
+end
+
+if ~isempty(PHNROS)
+    OS          = struct;
+    OS.Time     = TimeOS;
+    OS.Volt     = VoltOS;
+    OS.Awave    = AwaveOS;
+    OS.Atime    = AtimeOS;
+    OS.Bwave    = BwaveOS;
+    OS.Btime    = BtimeOS;
+    OS.BT       = BTOS;
+    OS.PT       = PTOS;
+    OS.RatioPHNR= RatioPHNROS;
+    OS.PHNRtime = PHNRtimeOS;
+else 
+    PHNROS = [];
+end
 
 % Graph PHNR
 

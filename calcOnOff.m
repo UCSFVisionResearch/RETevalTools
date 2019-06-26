@@ -87,6 +87,33 @@ AtimeOS = TimeOS(locAwaveOS);
 BtimeOS = TimeOS(locBwaveOS);
 DtimeOS = TimeOS(locDwaveOS);
 
+if ~isempty(OnOffOD)
+    OD          = struct;
+    OD.Time     = TimeOD;
+    OD.Volt     = VoltOD;
+    OD.Awave    = AwaveOD;
+    OD.Atime    = AtimeOD;
+    OD.Bwave    = BwaveOD;
+    OD.Btime    = BtimeOD;
+    OD.Dwave    = DwaveOD;
+    OD.Dtime    = DtimeOD;
+else
+    OnOffOD = [];
+end
+
+if ~isempty(OnOffOS)
+    OS          = struct;
+    OS.Time     = TimeOS;
+    OS.Volt     = VoltOS;
+    OS.Awave    = AwaveOS;
+    OS.Atime    = AtimeOS;
+    OS.Bwave    = BwaveOS;
+    OS.Btime    = BtimeOS;
+    OS.Dwave    = DwaveOS;
+    OS.Dtime    = DtimeOS;
+else 
+    OnOffOS = [];
+end
 
 % Plot graph 
 figure('Name', 'Frequency Response Profile', 'visible', 'off'); hold on;

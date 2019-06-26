@@ -104,6 +104,8 @@ if ~isempty(FlickerOS)
     OS.Amps     = AmpOS;
     OS.AmpAvg   = AmpOSavg;
     OS.AmpFFT   = AmpOSfft;
+else
+    FlickerOS = [];
 end
 
 %% Plot responses in time and circle peaks locations 'visible','off'
