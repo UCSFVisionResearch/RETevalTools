@@ -1,3 +1,4 @@
+function [OD, OS] = calcOnOff(PlotAndSave)
 %% Load OnOff Data
 
 [OnOffOD, OnOffOS, filename] = loadRETevalOnOff;
@@ -116,35 +117,38 @@ else
 end
 
 % Plot graph 
-figure('Name', 'Frequency Response Profile', 'visible', 'off'); hold on;
-subplot(2,1,1)
-if ~isempty(OnOffOD)
-    plot(TimeOD, VoltOD, 'k');
-    hold on
-    %scatter(TimeOD(locsPosOD), VoltOD(locsPosOD),'or');
-    %scatter(TimeOD(locsNegOD), VoltOD(locsNegOD),'ob');
-    scatter(TimeOD(locAwaveOD), VoltOD(locAwaveOD),'or');
-    scatter(TimeOD(locBwaveOD), VoltOD(locBwaveOD),'ob');
-    %scatter(TimeOD(450), VoltOD(450), 'o')
-    scatter(TimeOD(locDwaveOD), VoltOD(locDwaveOD), 'og');
-    xlabel('Time (ms)');
-    ylabel('Amplitude (microV)');
+if exist('PlotAndSave', 'var') && PlotAndSave
+    figure('Name', 'Frequency Response Profile', 'visible', 'off'); hold on;
+    subplot(2,1,1)
+    if ~isempty(OnOffOD)
+        plot(TimeOD, VoltOD, 'k');
+        hold on
+        %scatter(TimeOD(locsPosOD), VoltOD(locsPosOD),'or');
+        %scatter(TimeOD(locsNegOD), VoltOD(locsNegOD),'ob');
+        scatter(TimeOD(locAwaveOD), VoltOD(locAwaveOD),'or');
+        scatter(TimeOD(locBwaveOD), VoltOD(locBwaveOD),'ob');
+        %scatter(TimeOD(450), VoltOD(450), 'o')
+        scatter(TimeOD(locDwaveOD), VoltOD(locDwaveOD), 'og');
+        xlabel('Time (ms)');
+        ylabel('Amplitude (microV)');
+    end
+    
+    subplot(2,1,2)
+    if ~isempty(OnOffOS)
+        plot(TimeOS, VoltOS, 'k');
+        hold on
+        %scatter(TimeOS(locsPosOS), VoltOS(locsPosOS),'or');
+        %scatter(TimeOS(locsNegOS), VoltOS(locsNegOS),'ob');
+        scatter(TimeOS(locAwaveOS), VoltOS(locAwaveOS),'or');
+        scatter(TimeOS(locBwaveOS), VoltOS(locBwaveOS),'ob');
+        scatter(TimeOS(locDwaveOS), VoltOS(locDwaveOS), 'og');
+        xlabel('Time (ms)');
+        ylabel('Amplitude (microV)');
+    end
+    
+    %
+    [filepath,name,ext] = fileparts(filename);
+    print([filepath filesep name '-plot.pdf'],'-dpdf','-fillpage');
+    save([filepath filesep name '-data.mat'], 'OD',  'OS');
 end
-
-subplot(2,1,2)
-if ~isempty(OnOffOS)
-    plot(TimeOS, VoltOS, 'k');
-    hold on
-    %scatter(TimeOS(locsPosOS), VoltOS(locsPosOS),'or');
-    %scatter(TimeOS(locsNegOS), VoltOS(locsNegOS),'ob');
-    scatter(TimeOS(locAwaveOS), VoltOS(locAwaveOS),'or');
-    scatter(TimeOS(locBwaveOS), VoltOS(locBwaveOS),'ob');
-    scatter(TimeOS(locDwaveOS), VoltOS(locDwaveOS), 'og');
-    xlabel('Time (ms)');
-    ylabel('Amplitude (microV)');
 end
-
-%
-[filepath,name,ext] = fileparts(filename);
-print([filepath filesep name '-plot.pdf'],'-dpdf','-fillpage');
-save([filepath filesep name '-data.mat'], 'AwaveOD', 'BwaveOD', 'DwaveOD', 'AtimeOD', 'BtimeOD', 'DtimeOD',  'AwaveOS', 'BwaveOS', 'DwaveOS', 'AtimeOS', 'BtimeOS', 'DtimeOS');

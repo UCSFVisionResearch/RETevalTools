@@ -1,3 +1,4 @@
+function [OD, OS] = calcFRC(PlotAndSave)
 %% Loads data and calculates the Frequency Response Curve
 % TODO: debug fftRETevalAmp does not calculate amplitudes for frequencies >0
 
@@ -20,7 +21,6 @@ if ~isempty(SinOD)
         Response = [tmpTime, tmpVolt];
         assignin('base', ['SinOD' freqsS{(idx+1)/2} 'hz'], Response);
     end
-end
 
 if ~isempty(SinOS) 
     for idx = 1:2:size(SinOS,2)
@@ -34,6 +34,7 @@ if ~isempty(SinOS)
         assignin('base', ['SinOS' freqsS{(idx+1)/2} 'hz'], Response);
     end
 end
+
 
 clear tmp* mask Response idx
 
@@ -93,24 +94,26 @@ else
 end
 
 % Plot Frequency Response Profile
-
-figure('Name', 'Frequency Response Profile'); hold on;
-subplot(1,2,1)
-if ~isempty(SinOD)
-    plot(freqs, AmpsOD, '-ok');
-    xlabel('Frequency (hz)');
-    ylabel('Amplitude (microV)');
-    ylim([0 10]);
+if exist('PlotAndSave', 'var') && PlotAndSave
+    figure('Name', 'Frequency Response Profile'); hold on;
+    subplot(1,2,1)
+    if ~isempty(SinOD)
+        plot(freqs, AmpsOD, '-ok');
+        xlabel('Frequency (hz)');
+        ylabel('Amplitude (microV)');
+        ylim([0 10]);
+    end
+    
+    subplot(1,2,2)
+    if ~isempty(SinOS)
+        plot(freqs, AmpsOS, '-ok');
+        xlabel('Frequency (hz)');
+        ylabel('Amplitude (microV)');
+        ylim([0 10]);
+    end
+    
+    [filepath,name,~] = fileparts(filename);
+    print([filepath filesep name '-FRCplot.pdf'],'-dpdf','-fillpage');
+    save([filepath filesep name '-FRCdata.mat'], 'OD','OS');
 end
-
-subplot(1,2,2)
-if ~isempty(SinOS)
-    plot(freqs, AmpsOS, '-ok');
-    xlabel('Frequency (hz)');
-    ylabel('Amplitude (microV)');
-    ylim([0 10]);
 end
-
-[filepath,name,ext] = fileparts(filename);
-print([filepath filesep name '-FRCplot.pdf'],'-dpdf','-fillpage');
-save([filepath filesep name '-FRCdata.mat'], 'AmpsOD', 'AmpsOS', 'freqs');

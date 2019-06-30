@@ -1,3 +1,4 @@
+function [OD, OS] = calcPHNR(PlotAndSave)
 %% Load data
 
 [~, ~, PHNROD, ~, ~, PHNROS, filename] = loadRETevalPHNR;
@@ -108,35 +109,37 @@ else
 end
 
 % Graph PHNR
-
-figure('Name', 'Frequency Response Profile', 'visible', 'off'); hold on;
-subplot(2,1,1)
-if ~isempty(PHNROD)
-    plot(TimeOD, VoltOD, 'k');
-    hold on
-    %scatter(TimeOD(locsPosOD), VoltOD(locsPosOD),'or');
-    %scatter(TimeOD(locsNegOD), VoltOD(locsNegOD),'ob');
-    scatter(TimeOD(locAwaveOD), VoltOD(locAwaveOD),'or');
-    scatter(TimeOD(locBwaveOD), VoltOD(locBwaveOD),'ob');
-    scatter(TimeOD(locMinwaveOD), VoltOD(locMinwaveOD), 'og');
-    xlabel('Time (ms)');
-    ylabel('Amplitude (microV)');
+if exist('PlotAndSave', 'var') && PlotAndSave
+    figure('Name', 'Frequency Response Profile', 'visible', 'off'); hold on;
+    subplot(2,1,1)
+    if ~isempty(PHNROD)
+        plot(TimeOD, VoltOD, 'k');
+        hold on
+        %scatter(TimeOD(locsPosOD), VoltOD(locsPosOD),'or');
+        %scatter(TimeOD(locsNegOD), VoltOD(locsNegOD),'ob');
+        scatter(TimeOD(locAwaveOD), VoltOD(locAwaveOD),'or');
+        scatter(TimeOD(locBwaveOD), VoltOD(locBwaveOD),'ob');
+        scatter(TimeOD(locMinwaveOD), VoltOD(locMinwaveOD), 'og');
+        xlabel('Time (ms)');
+        ylabel('Amplitude (microV)');
+    end
+    
+    subplot(2,1,2)
+    if ~isempty(PHNROS)
+        plot(TimeOS, VoltOS, 'k');
+        hold on
+        %scatter(TimeOS(locsPosOS), VoltOS(locsPosOS),'or');
+        %scatter(TimeOS(locsNegOS), VoltOS(locsNegOS),'ob');
+        scatter(TimeOS(locAwaveOS), VoltOS(locAwaveOS),'or');
+        scatter(TimeOS(locBwaveOS), VoltOS(locBwaveOS),'ob');
+        scatter(TimeOS(locMinwaveOS), VoltOS(locMinwaveOS), 'og');
+        xlabel('Time (ms)');
+        ylabel('Amplitude (microV)');
+    end
+    
+    % Print PHNR
+    [filepath,name,~] = fileparts(filename);
+    print([filepath filesep name '-PHNRplot.pdf'],'-dpdf','-fillpage');
+    save([filepath filesep name '-PHNRdata.mat'], 'OD','OS');
 end
-
-subplot(2,1,2)
-if ~isempty(PHNROS)
-    plot(TimeOS, VoltOS, 'k');
-    hold on
-    %scatter(TimeOS(locsPosOS), VoltOS(locsPosOS),'or');
-    %scatter(TimeOS(locsNegOS), VoltOS(locsNegOS),'ob');
-    scatter(TimeOS(locAwaveOS), VoltOS(locAwaveOS),'or');
-    scatter(TimeOS(locBwaveOS), VoltOS(locBwaveOS),'ob');
-    scatter(TimeOS(locMinwaveOS), VoltOS(locMinwaveOS), 'og');
-    xlabel('Time (ms)');
-    ylabel('Amplitude (microV)');
 end
-
-% Print PHNR
-[filepath,name,ext] = fileparts(filename);
-print([filepath filesep name '-PHNRplot.pdf'],'-dpdf','-fillpage');
-save([filepath filesep name '-PHNRdata.mat'], 'AwaveOD', 'BwaveOD', 'BTOD', 'PTOD','ratioPHNROD', 'AwaveOS', 'BwaveOS', 'BTOS', 'PTOS', 'ratioPHNROS','AtimeOD','BtimeOD','PHNRtimeOD','AtimeOS','BtimeOS','PHNRtimeOS');

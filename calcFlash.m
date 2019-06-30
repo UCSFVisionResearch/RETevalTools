@@ -1,3 +1,4 @@
+function [OD, OS] = calcFlash(PlotAndSave)
 %% Load data
 
 [FlashOD, ~, ~, FlashOS, ~, ~, filename] = loadRETevalPHNR;
@@ -81,36 +82,36 @@ else
 end
 
 % graph Flash 
-figure('Name', 'Frequency Response Profile','visible','off'); hold on;
-subplot(2,1,1)
-if ~isempty(FlashOD)
-    plot(TimeOD, VoltOD, 'k');
-    hold on
-    %scatter(TimeOD(locsPosOD), VoltOD(locsPosOD),'or');
-    %scatter(TimeOD(locsNegOD), VoltOD(locsNegOD),'ob');
-    scatter(TimeOD(locAwaveOD), VoltOD(locAwaveOD),'or');
-    scatter(TimeOD(locBwaveOD), VoltOD(locBwaveOD),'ob');
-    xlabel('Time (ms)');
-    ylabel('Amplitude (microV)');
+if exist('PlotAndSave', 'var') && PlotAndSave
+    figure('Name', 'Frequency Response Profile','visible','off'); hold on;
+    subplot(2,1,1)
+    if ~isempty(FlashOD)
+        plot(TimeOD, VoltOD, 'k');
+        hold on
+        %scatter(TimeOD(locsPosOD), VoltOD(locsPosOD),'or');
+        %scatter(TimeOD(locsNegOD), VoltOD(locsNegOD),'ob');
+        scatter(TimeOD(locAwaveOD), VoltOD(locAwaveOD),'or');
+        scatter(TimeOD(locBwaveOD), VoltOD(locBwaveOD),'ob');
+        xlabel('Time (ms)');
+        ylabel('Amplitude (microV)');
+    end
+    
+    subplot(2,1,2)
+    if ~isempty(FlashOS)
+        plot(TimeOS, VoltOS, 'k');
+        hold on
+        %scatter(TimeOS(locsPosOS), VoltOS(locsPosOS),'or');
+        %scatter(TimeOS(locsNegOS), VoltOS(locsNegOS),'ob');
+        scatter(TimeOS(locAwaveOS), VoltOS(locAwaveOS),'or');
+        scatter(TimeOS(locBwaveOS), VoltOS(locBwaveOS),'ob');
+        xlabel('Time (ms)');
+        ylabel('Amplitude (microV)');
+    end
+
+    % Print Flash 
+    [filepath,name,~] = fileparts(filename);
+    print([filepath filesep name '-Flashplot.pdf'],'-dpdf','-fillpage');
+    save([filepath filesep name '-Flashdata.mat'], 'OD', 'OS')
 end
-
-subplot(2,1,2)
-if ~isempty(FlashOS)
-    plot(TimeOS, VoltOS, 'k');
-    hold on
-    %scatter(TimeOS(locsPosOS), VoltOS(locsPosOS),'or');
-    %scatter(TimeOS(locsNegOS), VoltOS(locsNegOS),'ob');
-    scatter(TimeOS(locAwaveOS), VoltOS(locAwaveOS),'or');
-    scatter(TimeOS(locBwaveOS), VoltOS(locBwaveOS),'ob');
-    xlabel('Time (ms)');
-    ylabel('Amplitude (microV)');
 end
-
-% Print Flash 
-
-[filepath,name,ext] = fileparts(filename);
-print([filepath filesep name '-Flashplot.pdf'],'-dpdf','-fillpage');
-save([filepath filesep name '-Flashdata.mat'], 'AwaveOD', 'BwaveOD', 'AwaveOS', 'BwaveOS', 'AtimeOD', 'BtimeOD', 'AtimeOS', 'BtimeOS');
-
-
 
