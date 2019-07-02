@@ -1,7 +1,11 @@
-function [OD, OS] = calcPHNR(PlotAndSave)
+function [OD, OS] = calcPHNR(PlotAndSave, filename)
 %% Load data
 
-[~, ~, PHNROD, ~, ~, PHNROS, filename] = loadRETevalPHNR;
+if ~exist('filename', 'var')
+    [~, ~, PHNROD, ~, ~, PHNROS, filename] = loadRETevalPHNR;
+else
+    [~, ~, PHNROD, ~, ~, PHNROS, filename] = loadRETevalPHNR(filename);
+end
 
 %% PHNR 
 if ~isempty(PHNROD) 
@@ -69,12 +73,12 @@ BTOS = -VoltOS(locMinwaveOS);
 PTOS = plus(BwaveOS, BTOS);
 RatioPHNROS = PTOS/BwaveOS;
 
-AtimeOD = timeOD(locAwaveOD);
-BtimeOD = timeOD(locBwaveOD);
-PHNRtimeOD = timeOD(locMinwaveOD);
-AtimeOS = timeOS(locAwaveOS);
-BtimeOS = timeOS(locBwaveOS);
-PHNRtimeOS = timeOS(locMinwaveOS);
+AtimeOD     = TimeOD(locAwaveOD);
+BtimeOD     = TimeOD(locBwaveOD);
+PHNRtimeOD  = TimeOD(locMinwaveOD);
+AtimeOS     = TimeOS(locAwaveOS);
+BtimeOS     = TimeOS(locBwaveOS);
+PHNRtimeOS  = TimeOS(locMinwaveOS);
 
 if ~isempty(PHNROD)
     OD          = struct;
@@ -110,7 +114,7 @@ end
 
 % Graph PHNR
 if exist('PlotAndSave', 'var') && PlotAndSave
-    figure('Name', 'Frequency Response Profile', 'visible', 'off'); hold on;
+    figure('Name', 'Frequency Response Profile', 'visible', 'on'); hold on;
     subplot(2,1,1)
     if ~isempty(PHNROD)
         plot(TimeOD, VoltOD, 'k');

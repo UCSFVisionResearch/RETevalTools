@@ -2,14 +2,18 @@
 % Imports csv data exprted with RFFextractor
 % ERG data recorded with Phnr protacol 
 
-function [OnOffOD, OnOffOS, filename] = loadRETevalOnOff()
+function [OnOffOD, OnOffOS, filename] = loadRETevalOnOff(filename)
 %% Initialize variables.
-[file,path] = uigetfile('*.csv');
-if isequal(file,0)
-   disp('User selected Cancel');
+if ~exist('filename', 'var')
+    [file,path] = uigetfile('*.csv');
+    if isequal(file,0)
+        disp('User selected Cancel');
+    else
+        filename = fullfile(path,file);
+        delimiter = ',';
+    end
 else
-   filename = fullfile(path,file);
-   delimiter = ',';
+    delimiter = ',';
 end
 
 % For more information, see the TEXTSCAN documentation.
@@ -18,17 +22,15 @@ fileID = fopen(filename,'r');
 dataArray = textscan(fileID, formatSpec, 'Delimiter', delimiter, 'TextType', 'string', 'EmptyValue', NaN, 'HeaderLines', 2, 'ReturnOnError', false, 'EndOfLine', '\r\n');
 fclose(fileID);
 
-
-
 % Create output variable
 OnOff = [dataArray{1:end-1}];
-    if size(OnOff, 2) > 2
-        OnOffOD = OnOff(:,1:2);
-        OnOffOS = OnOff(:,3:4);
-    else 
-        OnOffOD = OnOff;
-        OnOffOS= [];
-    end
+if size(OnOff, 2) > 2
+    OnOffOD = OnOff(:,1:2);
+    OnOffOS = OnOff(:,3:4);
+else
+    OnOffOD = OnOff;
+    OnOffOS= [];
+end
 
 %% Clear temporary variables
 clearvars delimiter startRow formatSpec fileID dataArray ans file path;

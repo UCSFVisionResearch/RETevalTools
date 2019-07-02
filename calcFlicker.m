@@ -1,7 +1,10 @@
-function [OD, OS] = calcFlicker(PlotAndSave)
+function [OD, OS] = calcFlicker(PlotAndSave, filename)
 %% Load data
-[~, FlickerOD, ~, ~, FlickerOS, ~, filename] = loadRETevalPHNR;
-
+if ~exist('filename', 'var')
+    [~, FlickerOD, ~, ~, FlickerOS, ~, filename] = loadRETevalPHNR;
+else
+    [~, FlickerOD, ~, ~, FlickerOS, ~, filename] = loadRETevalPHNR(filename);
+end
 %% Extract response to Flicker 28Hz stimulation and trim NaN values 
 if ~isempty(FlickerOD)
     mask = isnan(FlickerOD);

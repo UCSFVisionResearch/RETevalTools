@@ -2,14 +2,18 @@
 % Imports csv data exprted with RFFextractor
 % ERG data recorded with Phnr protacol 
 
-function [FlashOD, FlickerOD, PHNROD, FlashOS, FlickerOS, PHNROS, filename] = loadRETevalPHNR()
+function [FlashOD, FlickerOD, PHNROD, FlashOS, FlickerOS, PHNROS, filename] = loadRETevalPHNR(filename)
 %% Initialize variables.
-[file,path] = uigetfile('*.csv');
-if isequal(file,0)
-   disp('User selected Cancel');
+if ~exist('filename', 'var')
+    [file,path] = uigetfile('*.csv');
+    if isequal(file,0)
+        disp('User selected Cancel');
+    else
+        filename = fullfile(path,file);
+        delimiter = ',';
+    end
 else
-   filename = fullfile(path,file);
-   delimiter = ',';
+    delimiter = ',';
 end
 
 % For more information, see the TEXTSCAN documentation.

@@ -1,8 +1,11 @@
-function [OD, OS] = calcFlash(PlotAndSave)
+function [OD, OS] = calcFlash(PlotAndSave, filename)
 %% Load data
 
+if ~exist('filename', 'var')
 [FlashOD, ~, ~, FlashOS, ~, ~, filename] = loadRETevalPHNR;
-
+else
+[FlashOD, ~, ~, FlashOS, ~, ~, filename] = loadRETevalPHNR(filename);    
+end
 %% Flash 
 if ~isempty(FlashOD) 
     mask = isnan(FlashOD);
@@ -13,7 +16,7 @@ if ~isempty(FlashOD)
 end
 
 if ~isempty(FlashOS) 
-    mask = isnan(FlashOS)
+    mask = isnan(FlashOS);
     TimeOS = FlashOS(:,1);
     TimeOS = TimeOS(~mask(:,2));
     VoltOS = FlashOS(:,2);
@@ -52,10 +55,10 @@ BwaveOD = plus(VoltOD(locBwaveOD), AwaveOD);
 AwaveOS = -VoltOS(locAwaveOS);
 BwaveOS = plus(VoltOS(locBwaveOS), AwaveOS);
 
-AtimeOD = timeOD(locAwaveOD);
-BtimeOD = timeOD(locBwaveOD):
-AtimeOS = timeOS(locAwaveOS);
-BtimeOS = timeOS(locBwaveOS):
+AtimeOD = TimeOD(locAwaveOD);
+BtimeOD = TimeOD(locBwaveOD);
+AtimeOS = TimeOS(locAwaveOS);
+BtimeOS = TimeOS(locBwaveOS);
 
 if ~isempty(FlashOD)
     OD          = struct;
@@ -83,7 +86,7 @@ end
 
 % graph Flash 
 if exist('PlotAndSave', 'var') && PlotAndSave
-    figure('Name', 'Frequency Response Profile','visible','off'); hold on;
+    figure('Name', 'Frequency Response Profile','visible','on'); hold on;
     subplot(2,1,1)
     if ~isempty(FlashOD)
         plot(TimeOD, VoltOD, 'k');

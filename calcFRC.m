@@ -1,8 +1,13 @@
-function [OD, OS] = calcFRC(PlotAndSave)
+function [OD, OS] = calcFRC(PlotAndSave, filename)
 %% Loads data and calculates the Frequency Response Curve
 % TODO: debug fftRETevalAmp does not calculate amplitudes for frequencies >0
 
-[SinOD, SinOS, filename] = loadRETevalSin;
+if ~exist('filename', 'var') || ~filename
+    [SinOD, SinOS, filename] = loadRETevalSin;
+else
+    [SinOD, SinOS, filename] = loadRETevalSin(filename);
+end
+    
 
 % Isolate time/volt of a single response and trim NaN values
 % then store them into separate arrays for each frequencies
@@ -21,6 +26,7 @@ if ~isempty(SinOD)
         Response = [tmpTime, tmpVolt];
         assignin('base', ['SinOD' freqsS{(idx+1)/2} 'hz'], Response);
     end
+end
 
 if ~isempty(SinOS) 
     for idx = 1:2:size(SinOS,2)
@@ -34,15 +40,14 @@ if ~isempty(SinOS)
         assignin('base', ['SinOS' freqsS{(idx+1)/2} 'hz'], Response);
     end
 end
-
-
 clear tmp* mask Response idx
 
-% Calculate Frequency Response Profile for each eye
+%% Calculate Frequency Response Profile for each eye
 
 AmpsOD = zeros(size(freqs));
 
 for f = 1:numel(freqs)
+    exist(['SinOD' freqsS{f} 'hz'],'var')
     Response = eval(['SinOD' freqsS{f} 'hz']);
     tmpTime = Response(:,1)/1000; % times are stored in ms, convert to s
     tmpVolt = Response(:,2);

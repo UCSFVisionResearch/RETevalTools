@@ -1,8 +1,11 @@
-function [OD, OS] = calcOnOff(PlotAndSave)
+function [OD, OS] = calcOnOff(PlotAndSave, filename)
 %% Load OnOff Data
 
-[OnOffOD, OnOffOS, filename] = loadRETevalOnOff;
-
+if ~exist('filename', 'var')
+    [OnOffOD, OnOffOS, filename] = loadRETevalOnOff;
+else
+    [OnOffOD, OnOffOS, filename] = loadRETevalOnOff(filename);
+end
 
 if ~isempty(OnOffOD) 
     mask = isnan(OnOffOD);
@@ -118,7 +121,7 @@ end
 
 % Plot graph 
 if exist('PlotAndSave', 'var') && PlotAndSave
-    figure('Name', 'Frequency Response Profile', 'visible', 'off'); hold on;
+    figure('Name', 'Frequency Response Profile', 'visible', 'on'); hold on;
     subplot(2,1,1)
     if ~isempty(OnOffOD)
         plot(TimeOD, VoltOD, 'k');
