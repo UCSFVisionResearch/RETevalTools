@@ -4,7 +4,7 @@
 
 function [SinOD,SinOS, filename] = loadRETevalSin(filename)
 %% Initialize variables.
-if ~exist('filename', 'var') || ~filename
+if ~exist('filename', 'var')
     [file,path] = uigetfile('*.csv');
     filename = fullfile(path,file);
     if isequal(file,0)
@@ -13,7 +13,7 @@ if ~exist('filename', 'var') || ~filename
     end
 end
 
-if contains(file, 'reported')
+if contains(filename, 'reported')
     % Name filename
     %filename = fullfile(path,file);
     % REPORTED WAVEFORM exported from rffExtractor
@@ -35,7 +35,7 @@ if contains(file, 'reported')
     opts.EmptyLineRule = "read";
     
     % Import the data
-    dataTable = readtable(fullfile(path, file), opts);
+    dataTable = readtable(filename, opts);
     
     % Convert to output type
     Sin = table2array(dataTable);
@@ -44,7 +44,7 @@ else
     
     delimiter = ",";
     formatSpec = '%*q%*q%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%*s%*s%[^\n\r]';
-    fileID = fopen(fullfile(path, file),'r');
+    fileID = fopen(filename,'r');
     dataArray = textscan(fileID, formatSpec, 'Delimiter', delimiter, 'TextType', 'string', 'EmptyValue', NaN, 'HeaderLines', 2, 'ReturnOnError', false, 'EndOfLine', '\r\n');
     fclose(fileID);
     

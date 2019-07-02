@@ -1,19 +1,18 @@
 function [OD, OS] = calcFRC(PlotAndSave, filename)
 %% Loads data and calculates the Frequency Response Curve
-% TODO: debug fftRETevalAmp does not calculate amplitudes for frequencies >0
 
-if ~exist('filename', 'var') || ~filename
+if ~exist('filename', 'var')
     [SinOD, SinOS, filename] = loadRETevalSin;
 else
     [SinOD, SinOS, filename] = loadRETevalSin(filename);
 end
     
-
 % Isolate time/volt of a single response and trim NaN values
 % then store them into separate arrays for each frequencies
 
 freqs = [50,45,40,35,30,25,20,15,10,7,5,3,2,1,0.7,0.5,0.3];
 freqsS = {'50','45','40','35','30','25','20','15','10','7','5','3','2','1','07','05','03'};
+Sin = struct;
 
 if ~isempty(SinOD) 
     for idx = 1:2:size(SinOD,2)
@@ -24,7 +23,7 @@ if ~isempty(SinOD)
         tmpVolt = tmpVolt(~mask(:,2));
         tmpTime = tmpTime(~mask(:,1));
         Response = [tmpTime, tmpVolt];
-        assignin('base', ['SinOD' freqsS{(idx+1)/2} 'hz'], Response);
+        Sin.(['SinOD' freqsS{(idx+1)/2} 'hz'])= Response;
     end
 end
 
@@ -37,7 +36,7 @@ if ~isempty(SinOS)
         tmpVolt = tmpVolt(~mask(:,2));
         tmpTime = tmpTime(~mask(:,1));
         Response = [tmpTime, tmpVolt];
-        assignin('base', ['SinOS' freqsS{(idx+1)/2} 'hz'], Response);
+        Sin.(['SinOS' freqsS{(idx+1)/2} 'hz']) = Response;
     end
 end
 clear tmp* mask Response idx
@@ -47,8 +46,7 @@ clear tmp* mask Response idx
 AmpsOD = zeros(size(freqs));
 
 for f = 1:numel(freqs)
-    exist(['SinOD' freqsS{f} 'hz'],'var')
-    Response = eval(['SinOD' freqsS{f} 'hz']);
+    Response = Sin.(['SinOD' freqsS{f} 'hz']);
     tmpTime = Response(:,1)/1000; % times are stored in ms, convert to s
     tmpVolt = Response(:,2);
     
@@ -66,7 +64,7 @@ end
 AmpsOS = zeros(size(freqs));
 
 for f = 1:numel(freqs)
-    Response = eval(['SinOS' freqsS{f} 'hz']);
+    Response = Sin.(['SinOS' freqsS{f} 'hz']);
     tmpTime = Response(:,1)/1000; % times are stored in ms, convert to s
     tmpVolt = Response(:,2);
     
