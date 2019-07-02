@@ -46,7 +46,12 @@ clear tmp* mask Response idx
 AmpsOD = zeros(size(freqs));
 
 for f = 1:numel(freqs)
+<<<<<<< HEAD
     Response = Sin.(['SinOD' freqsS{f} 'hz']);
+=======
+    exist(['SinOD' freqsS{f} 'hz'],'var');
+    Response = eval(['SinOD' freqsS{f} 'hz']);
+>>>>>>> master
     tmpTime = Response(:,1)/1000; % times are stored in ms, convert to s
     tmpVolt = Response(:,2);
     
