@@ -24,7 +24,7 @@ end
 clear mask
 
 %% Split into three sections
-if ~isempty(FlickerOD)
+if ~isempty(TimeOD)
     [pksPosOD,locsPosOD] = findpeaks(VoltOD);
     [pksNegOD,locsNegOD] = findpeaks(-VoltOD);
     
@@ -53,10 +53,14 @@ if ~isempty(FlickerOD)
     AmpOD = [x, y, z]; % individual peak-to-peak amplitudes in time domain
     AmpODavg = mean(AmpOD); % average peak-to-peak amplitude in time domain
     AmpODfft = fftRETevalAmp(TimeOD/1000, VoltOD, 28); %1st harmonic amplitude
+else 
+    AmpOD = [0, 0, 0];
+    AmpODavg = [0];
+    AmpODfft = [0];
 end
 
 % Repeat for left eye
-if ~isempty(FlickerOS)
+if ~isempty(TimeOS)
     [pksPosOS,locsPosOS] = findpeaks(VoltOS);
     [pksNegOS,locsNegOS] = findpeaks(-VoltOS);
     
@@ -65,8 +69,8 @@ if ~isempty(FlickerOS)
     SecondTimeOS    = times((TimeOS <= TimeOS(locsPosOS(locTopPeaks(2))) & TimeOS > TimeOS(locsPosOS(locTopPeaks(1)))), TimeOS);
     ThirdTimeOS     = times((TimeOS <= TimeOS(locsPosOS(locTopPeaks(3))) & TimeOS > TimeOS(locsPosOS(locTopPeaks(2)))), TimeOS);
     FirstVoltOS     = times((TimeOS <= TimeOS(locsPosOS(locTopPeaks(1)))), VoltOS);
-    SecondVoltOS    = times((TimeOS <= TimeOS(locsPosOS(locTopPeaks(2))) & TimeOS > TimeOD(locsPosOS(locTopPeaks(1)))), VoltOS);
-    ThirdVoltOS     = times((TimeOS <= TimeOS(locsPosOS(locTopPeaks(3))) & TimeOS > TimeOD(locsPosOS(locTopPeaks(2)))), VoltOS);
+    SecondVoltOS    = times((TimeOS <= TimeOS(locsPosOS(locTopPeaks(2))) & TimeOS > TimeOS(locsPosOS(locTopPeaks(1)))), VoltOS);
+    ThirdVoltOS     = times((TimeOS <= TimeOS(locsPosOS(locTopPeaks(3))) & TimeOS > TimeOS(locsPosOS(locTopPeaks(2)))), VoltOS);
     
     [firstpksPosOS,  firstlocsPosOS]    = findpeaks(FirstVoltOS);
     [secondpksPosOS, secondlocsPosOS]   = findpeaks(SecondVoltOS);
@@ -80,12 +84,16 @@ if ~isempty(FlickerOS)
     [thirdlocBwaveOS, thirdlocAwaveOS]  = ABwave(thirdpksPosOS, thirdpksNegOS, thirdlocsPosOS, thirdlocsNegOS, TimeOS, VoltOS);
     
     % Calculations
-    x = minus(VoltOS(firstlocBwaveOS),  VoltOD(firstlocAwaveOS));
-    y = minus(VoltOS(secondlocBwaveOS), VoltOD(secondlocAwaveOS));
-    z = minus(VoltOS(thirdlocBwaveOS),  VoltOD(thirdlocAwaveOS));
+    x = minus(VoltOS(firstlocBwaveOS),  VoltOS(firstlocAwaveOS));
+    y = minus(VoltOS(secondlocBwaveOS), VoltOS(secondlocAwaveOS));
+    z = minus(VoltOS(thirdlocBwaveOS),  VoltOS(thirdlocAwaveOS));
     AmpOS = [x, y, z]; % individual peak-to-peak amplitude in time domain
     AmpOSavg = mean(AmpOS); % average peak-to-peak amplitude in time domain
     AmpOSfft = fftRETevalAmp(TimeOS/1000, VoltOS, 28); %1st harmonic amplitude
+else
+    AmpOS = [0, 0, 0];
+    AmpOSavg = [0];
+    AmpOSfft = [0];
 end
 
 %% Generate a structure containing all analyzed data
