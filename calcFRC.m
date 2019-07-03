@@ -86,6 +86,8 @@ if ~isempty(SinOD)
     OD.freqs    = freqs;
 else
     SinOD = [];
+    OD.Amps     = 0;
+    OD.freqs    = freqs;
 end
 
 if ~isempty(SinOS)
@@ -94,6 +96,8 @@ if ~isempty(SinOS)
     OS.freqs    = freqs;
 else 
     SinOS = [];
+    OS.Amps     = 0;
+    OS.freqs    = freqs;
 end
 
 % Plot Frequency Response Profile

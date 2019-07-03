@@ -24,74 +24,80 @@ if ~isempty(OnOffOS)
 end
 clear mask
 
-% Calculate A and B waves
-[pksPosOD,locsPosOD] = findpeaks(VoltOD);
-[pksNegOD,locsNegOD] = findpeaks(-VoltOD);
+if ~isempty(TimeOD)
+    % Calculate A and B waves
+    [pksPosOD,locsPosOD] = findpeaks(VoltOD);
+    [pksNegOD,locsNegOD] = findpeaks(-VoltOD);
+    
+    % First calculate B wave as maximum positive peak
+    pksBOD = times(pksPosOD, (TimeOD(locsPosOD) < 100));
+    [ValueBwaveOD, locBwaveOD] = max(pksBOD);
+    locBwaveOD = locsPosOD(locBwaveOD);
+    
+    % Calculate A wave as the first negative peak prior to B wave
+    locAwaveOD = TimeOD(locsNegOD) < TimeOD(locBwaveOD) & TimeOD(locsNegOD) > 0;
+    locAwaveOD = times(locAwaveOD, pksNegOD);
+    [~, locAwaveOD] = max(locAwaveOD);
+    locAwaveOD = locsNegOD(locAwaveOD);
+    
+    % Calculate the B wave for the second flash.
+    %First find the largest Neg wave, and then create set from there
+    PostBwaveOD = TimeOD(locsNegOD) > TimeOD(locBwaveOD);
+    PostBwaveOD = times(PostBwaveOD, pksNegOD);
+    [~, PostBwaveOD] = max(PostBwaveOD);
+    locDwaveOD = TimeOD(locsPosOD) > TimeOD(locsNegOD(PostBwaveOD)) & TimeOD(locsPosOD) < 300;
+    locDwaveOD = times(locDwaveOD, pksPosOD);
+    [~, locDwaveOD] = max(locDwaveOD);
+    locDwaveOD = locsPosOD(locDwaveOD);
+    % Calculate
+    stimulusoffOD = TimeOD > 209.4 & TimeOD < 209.5;
+    stimulusoffOD = times(stimulusoffOD, VoltOD);
+    
+    AwaveOD = -VoltOD(locAwaveOD);
+    BwaveOD = plus(VoltOD(locBwaveOD), AwaveOD);
+    DwaveOD = plus(VoltOD(locDwaveOD), abs(max(stimulusoffOD)));
+    
+    AtimeOD = TimeOD(locAwaveOD);
+    BtimeOD = TimeOD(locBwaveOD);
+    DtimeOD = TimeOD(locDwaveOD);
 
-% First calculate B wave as maximum positive peak
-pksBOD = times(pksPosOD, (TimeOD(locsPosOD) < 100));
-[ValueBwaveOD, locBwaveOD] = max(pksBOD);
-locBwaveOD = locsPosOD(locBwaveOD);
-
-% Calculate A wave as the first negative peak prior to B wave
-locAwaveOD = TimeOD(locsNegOD) < TimeOD(locBwaveOD) & TimeOD(locsNegOD) > 0;
-locAwaveOD = times(locAwaveOD, pksNegOD);
-[~, locAwaveOD] = max(locAwaveOD);
-locAwaveOD = locsNegOD(locAwaveOD);
-
-% Calculate the B wave for the second flash. 
-%First find the largest Neg wave, and then create set from there
-PostBwaveOD = TimeOD(locsNegOD) > TimeOD(locBwaveOD);
-PostBwaveOD = times(PostBwaveOD, pksNegOD);
-[~, PostBwaveOD] = max(PostBwaveOD);
-locDwaveOD = TimeOD(locsPosOD) > TimeOD(locsNegOD(PostBwaveOD)) & TimeOD(locsPosOD) < 300;
-locDwaveOD = times(locDwaveOD, pksPosOD);
-[~, locDwaveOD] = max(locDwaveOD);
-locDwaveOD = locsPosOD(locDwaveOD);
+end
 
 % Repeat for OS
-[pksPosOS,locsPosOS] = findpeaks(VoltOS);
-[pksNegOS,locsNegOS] = findpeaks(-VoltOS);
-pksBOS = times(pksPosOS, (TimeOS(locsPosOS) < 100));
-[~, locBwaveOS] = max(pksBOS);
-locBwaveOS = locsPosOS(locBwaveOS);
+if ~isempty(TimeOS)
+    [pksPosOS,locsPosOS] = findpeaks(VoltOS);
+    [pksNegOS,locsNegOS] = findpeaks(-VoltOS);
+    pksBOS = times(pksPosOS, (TimeOS(locsPosOS) < 100));
+    [~, locBwaveOS] = max(pksBOS);
+    locBwaveOS = locsPosOS(locBwaveOS);
+    
+    locAwaveOS = TimeOS(locsNegOS) < TimeOS(locBwaveOS) & TimeOS(locsNegOS) > 0;
+    locAwaveOS = times(locAwaveOS, pksNegOS);
+    [~, locAwaveOS] = max(locAwaveOS);
+    locAwaveOS = locsNegOS(locAwaveOS);
+    
+    PostBwaveOS = TimeOS(locsNegOS) > TimeOS(locBwaveOS);
+    PostBwaveOS = times(PostBwaveOS, pksNegOS);
+    [~, PostBwaveOS] = max(PostBwaveOS);
+    locDwaveOS = TimeOS(locsPosOS) > TimeOS(locsNegOS(PostBwaveOS)) & TimeOS(locsPosOS) < 300;
+    locDwaveOS = times(locDwaveOS, pksPosOS);
+    [~, locDwaveOS] = max(locDwaveOS);
+    locDwaveOS = locsPosOS(locDwaveOS);
+    
+    % Calculate
+    stimulusoffOS = TimeOS > 209.4 & TimeOS < 209.5;
+    stimulusoffOS = times(stimulusoffOS, VoltOS);
+    
+    AwaveOS = -VoltOS(locAwaveOS);
+    BwaveOS = plus(VoltOS(locBwaveOS), AwaveOS);
+    DwaveOS = plus(VoltOS(locDwaveOS), abs(max(stimulusoffOS)));
+    
+    AtimeOS = TimeOS(locAwaveOS);
+    BtimeOS = TimeOS(locBwaveOS);
+    DtimeOS = TimeOS(locDwaveOS);
+end
 
-locAwaveOS = TimeOS(locsNegOS) < TimeOS(locBwaveOS) & TimeOS(locsNegOS) > 0;
-locAwaveOS = times(locAwaveOS, pksNegOS);
-[~, locAwaveOS] = max(locAwaveOS);
-locAwaveOS = locsNegOS(locAwaveOS);
-
-PostBwaveOS = TimeOS(locsNegOS) > TimeOS(locBwaveOS);
-PostBwaveOS = times(PostBwaveOS, pksNegOS);
-[~, PostBwaveOS] = max(PostBwaveOS);
-locDwaveOS = TimeOS(locsPosOS) > TimeOS(locsNegOS(PostBwaveOS)) & TimeOS(locsPosOS) < 300;
-locDwaveOS = times(locDwaveOS, pksPosOS);
-[~, locDwaveOS] = max(locDwaveOS);
-locDwaveOS = locsPosOS(locDwaveOS);
-
-% Calculate
-stimulusoffOD = TimeOD > 209.4 & TimeOD < 209.5;
-stimulusoffOD = times(stimulusoffOD, VoltOD);
-stimulusoffOS = TimeOS > 209.4 & TimeOS < 209.5;
-stimulusoffOS = times(stimulusoffOS, VoltOS);
-
-AwaveOD = -VoltOD(locAwaveOD);
-BwaveOD = plus(VoltOD(locBwaveOD), AwaveOD);
-DwaveOD = plus(VoltOD(locDwaveOD), abs(max(stimulusoffOD)));
-
-AwaveOS = -VoltOS(locAwaveOS);
-BwaveOS = plus(VoltOS(locBwaveOS), AwaveOS);
-DwaveOS = plus(VoltOS(locDwaveOS), abs(max(stimulusoffOS)));
-
-AtimeOD = TimeOD(locAwaveOD);
-BtimeOD = TimeOD(locBwaveOD);
-DtimeOD = TimeOD(locDwaveOD);
-
-AtimeOS = TimeOS(locAwaveOS);
-BtimeOS = TimeOS(locBwaveOS);
-DtimeOS = TimeOS(locDwaveOS);
-
-if ~isempty(OnOffOD)
+if ~isempty(TimeOD)
     OD          = struct;
     OD.Time     = TimeOD;
     OD.Volt     = VoltOD;
@@ -103,9 +109,18 @@ if ~isempty(OnOffOD)
     OD.Dtime    = DtimeOD;
 else
     OnOffOD = [];
+    OD          = struct;
+    OD.Time     = 0;
+    OD.Volt     = 0;
+    OD.Awave    = 0;
+    OD.Atime    = 0;
+    OD.Bwave    = 0;
+    OD.Btime    = 0;
+    OD.Dwave    = 0;
+    OD.Dtime    = 0;
 end
 
-if ~isempty(OnOffOS)
+if ~isempty(TimeOS)
     OS          = struct;
     OS.Time     = TimeOS;
     OS.Volt     = VoltOS;
@@ -117,6 +132,15 @@ if ~isempty(OnOffOS)
     OS.Dtime    = DtimeOS;
 else 
     OnOffOS = [];
+    OS          = struct;
+    OS.Time     = 0;
+    OS.Volt     = 0;
+    OS.Awave    = 0;
+    OS.Atime    = 0;
+    OS.Bwave    = 0;
+    OS.Btime    = 0;
+    OS.Dwave    = 0;
+    OS.Dtime    = 0;
 end
 
 % Plot graph 

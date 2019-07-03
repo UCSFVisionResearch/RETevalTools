@@ -26,61 +26,64 @@ end
 clear mask
 
 % Calculate A and B wave peaks
-[pksPosOD,locsPosOD] = findpeaks(VoltOD);
-[pksNegOD,locsNegOD] = findpeaks(-VoltOD);
-
-% First calculate B wave as maximum positive peak
-[ValueBwaveOD, locBwaveOD] = max(pksPosOD);
-locBwaveOD = locsPosOD(locBwaveOD);
-
-% Calculate A wave as the first negative peak prior to B wave
-locAwaveOD = TimeOD(locsNegOD) < TimeOD(locBwaveOD);
-locAwaveOD = find(locAwaveOD, 1, 'last' );
-locAwaveOD = locsNegOD(locAwaveOD);
-
-% Calculate PHNR. Most minimum peak after first trough from B wave
-MinwaveOD = TimeOD(locsNegOD) > TimeOD(locBwaveOD) & TimeOD(locsNegOD) < 100;
-MinwaveOD(find(MinwaveOD,1)) = 0;
-MinwaveOD = times(MinwaveOD, pksNegOD);
-[ValueMinwaveOD, locMinwaveOD] = max(MinwaveOD);
-locMinwaveOD = locsNegOD(locMinwaveOD);
+if ~isempty(TimeOD)
+    [pksPosOD,locsPosOD] = findpeaks(VoltOD);
+    [pksNegOD,locsNegOD] = findpeaks(-VoltOD);
+    
+    % First calculate B wave as maximum positive peak
+    [ValueBwaveOD, locBwaveOD] = max(pksPosOD);
+    locBwaveOD = locsPosOD(locBwaveOD);
+    
+    % Calculate A wave as the first negative peak prior to B wave
+    locAwaveOD = TimeOD(locsNegOD) < TimeOD(locBwaveOD);
+    locAwaveOD = find(locAwaveOD, 1, 'last' );
+    locAwaveOD = locsNegOD(locAwaveOD);
+    
+    % Calculate PHNR. Most minimum peak after first trough from B wave
+    MinwaveOD = TimeOD(locsNegOD) > TimeOD(locBwaveOD) & TimeOD(locsNegOD) < 100;
+    MinwaveOD(find(MinwaveOD,1)) = 0;
+    MinwaveOD = times(MinwaveOD, pksNegOD);
+    [ValueMinwaveOD, locMinwaveOD] = max(MinwaveOD);
+    locMinwaveOD = locsNegOD(locMinwaveOD);
+    % Calculate
+    AwaveOD = -VoltOD(locAwaveOD);
+    BwaveOD = plus(VoltOD(locBwaveOD), AwaveOD);
+    BTOD = -VoltOD(locMinwaveOD);
+    PTOD = plus(BwaveOD, BTOD);
+    RatioPHNROD = PTOD/BwaveOD;
+    AtimeOD     = TimeOD(locAwaveOD);
+    BtimeOD     = TimeOD(locBwaveOD);
+    PHNRtimeOD  = TimeOD(locMinwaveOD);
+end
 
 % Repeat for OS
-[pksPosOS,locsPosOS] = findpeaks(VoltOS);
-[pksNegOS,locsNegOS] = findpeaks(-VoltOS);
-[ValueBwaveOS, locBwaveOS] = max(pksPosOS);
-locBwaveOS = locsPosOS(locBwaveOS);
+if ~isempty(TimeOS)
+    [pksPosOS,locsPosOS] = findpeaks(VoltOS);
+    [pksNegOS,locsNegOS] = findpeaks(-VoltOS);
+    [ValueBwaveOS, locBwaveOS] = max(pksPosOS);
+    locBwaveOS = locsPosOS(locBwaveOS);
+    
+    locAwaveOS = TimeOS(locsNegOS) < TimeOS(locBwaveOS);
+    locAwaveOS = find(locAwaveOS, 1, 'last' );
+    locAwaveOS = locsNegOS(locAwaveOS);
+    
+    MinwaveOS = TimeOS(locsNegOS) > TimeOS(locBwaveOS) & TimeOS(locsNegOS) < 100;
+    MinwaveOS(find(MinwaveOS,1)) = 0;
+    MinwaveOS = times(MinwaveOS, pksNegOS);
+    [ValueMinwaveOS, locMinwaveOS] = max(MinwaveOS);
+    locMinwaveOS = locsNegOS(locMinwaveOS);
+    % Calculate
+    AwaveOS = -VoltOS(locAwaveOS);
+    BwaveOS = plus(VoltOS(locBwaveOS), AwaveOS);
+    BTOS = -VoltOS(locMinwaveOS);
+    PTOS = plus(BwaveOS, BTOS);
+    RatioPHNROS = PTOS/BwaveOS;
+    AtimeOS     = TimeOS(locAwaveOS);
+    BtimeOS     = TimeOS(locBwaveOS);
+    PHNRtimeOS  = TimeOS(locMinwaveOS);
+end
 
-locAwaveOS = TimeOS(locsNegOS) < TimeOS(locBwaveOS);
-locAwaveOS = find(locAwaveOS, 1, 'last' );
-locAwaveOS = locsNegOS(locAwaveOS);
-
-MinwaveOS = TimeOS(locsNegOS) > TimeOS(locBwaveOS) & TimeOS(locsNegOS) < 100;
-MinwaveOS(find(MinwaveOS,1)) = 0;
-MinwaveOS = times(MinwaveOS, pksNegOS);
-[ValueMinwaveOS, locMinwaveOS] = max(MinwaveOS);
-locMinwaveOS = locsNegOS(locMinwaveOS);
-
-% Calculate
-AwaveOD = -VoltOD(locAwaveOD);
-BwaveOD = plus(VoltOD(locBwaveOD), AwaveOD);
-BTOD = -VoltOD(locMinwaveOD);
-PTOD = plus(BwaveOD, BTOD);
-RatioPHNROD = PTOD/BwaveOD;
-AwaveOS = -VoltOS(locAwaveOS);
-BwaveOS = plus(VoltOS(locBwaveOS), AwaveOS);
-BTOS = -VoltOS(locMinwaveOS);
-PTOS = plus(BwaveOS, BTOS);
-RatioPHNROS = PTOS/BwaveOS;
-
-AtimeOD     = TimeOD(locAwaveOD);
-BtimeOD     = TimeOD(locBwaveOD);
-PHNRtimeOD  = TimeOD(locMinwaveOD);
-AtimeOS     = TimeOS(locAwaveOS);
-BtimeOS     = TimeOS(locBwaveOS);
-PHNRtimeOS  = TimeOS(locMinwaveOS);
-
-if ~isempty(PHNROD)
+if ~isempty(TimeOD)
     OD          = struct;
     OD.Time     = TimeOD;
     OD.Volt     = VoltOD;
@@ -94,9 +97,20 @@ if ~isempty(PHNROD)
     OD.PHNRtime = PHNRtimeOD;
 else
     PHNROD = [];
+    OD          = struct;
+    OD.Time     = 0;
+    OD.Volt     = 0;
+    OD.Awave    = 0;
+    OD.Atime    = 0;
+    OD.Bwave    = 0;
+    OD.Btime    = 0;
+    OD.BT       = 0;
+    OD.PT       = 0;
+    OD.RatioPHNR= 0;
+    OD.PHNRtime = 0;
 end
 
-if ~isempty(PHNROS)
+if ~isempty(TimeOS)
     OS          = struct;
     OS.Time     = TimeOS;
     OS.Volt     = VoltOS;
@@ -110,6 +124,17 @@ if ~isempty(PHNROS)
     OS.PHNRtime = PHNRtimeOS;
 else 
     PHNROS = [];
+    OS          = struct;
+    OS.Time     = 0;
+    OS.Volt     = 0;
+    OS.Awave    = 0;
+    OS.Atime    = 0;
+    OS.Bwave    = 0;
+    OS.Btime    = 0;
+    OS.BT       = 0;
+    OS.PT       = 0;
+    OS.RatioPHNR= 0;
+    OS.PHNRtime = 0;
 end
 
 % Graph PHNR
