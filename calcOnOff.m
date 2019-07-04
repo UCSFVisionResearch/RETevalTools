@@ -30,15 +30,20 @@ if ~isempty(TimeOD)
     [pksNegOD,locsNegOD] = findpeaks(-VoltOD);
     
     % First calculate B wave as maximum positive peak
-    pksBOD = times(pksPosOD, (TimeOD(locsPosOD) < 100));
+    locBwaveOD = TimeOD(locsPosOD) < 100 & TimeOD(locsPosOD) > 0;
+    pksBOD = pksPosOD(locBwaveOD);
     [~, locBwaveOD] = max(pksBOD);
-    locBwaveOD = locsPosOD(locBwaveOD);
+    baselineOD = find(TimeOD(locsPosOD) < 0);
+    baselineOD = baselineOD(end);
+    locBwaveOD = locsPosOD(plus(locBwaveOD, baselineOD));
     
     % Calculate A wave as the first negative peak prior to B wave
     locAwaveOD = TimeOD(locsNegOD) < TimeOD(locBwaveOD) & TimeOD(locsNegOD) > 0;
-    locAwaveOD = times(locAwaveOD, pksNegOD);
+    locAwaveOD = pksNegOD(locAwaveOD);
     [~, locAwaveOD] = max(locAwaveOD);
-    locAwaveOD = locsNegOD(locAwaveOD);
+    baselineOD = find(TimeOD(locsNegOD) < 0);
+    baselineOD = baselineOD(end);
+    locAwaveOD = locsNegOD(plus(locAwaveOD, baselineOD));
     
     % Calculate the D wave. look after signal is off from 200 ms
     %locDwaveOD = TimeOD(locsPosOD) > TimeOD(locsNegOD(PostBwaveOD)) & TimeOD(locsPosOD) < 300;
@@ -67,14 +72,19 @@ end
 if ~isempty(TimeOS)
     [pksPosOS,locsPosOS] = findpeaks(VoltOS);
     [pksNegOS,locsNegOS] = findpeaks(-VoltOS);
-    pksBOS = times(pksPosOS, (TimeOS(locsPosOS) < 100));
+    locBwaveOS = TimeOS(locsPosOS) < 100 & TimeOS(locsPosOS) > 0;
+    pksBOS = pksPosOS(locBwaveOS);
     [~, locBwaveOS] = max(pksBOS);
-    locBwaveOS = locsPosOS(locBwaveOS);
+    baselineOS = find(TimeOS(locsPosOS) < 0);
+    baselineOS = baselineOS(end);
+    locBwaveOS = locsPosOS(plus(locBwaveOS, baselineOS));
     
     locAwaveOS = TimeOS(locsNegOS) < TimeOS(locBwaveOS) & TimeOS(locsNegOS) > 0;
-    locAwaveOS = times(locAwaveOS, pksNegOS);
+    locAwaveOS = pksNegOS(locAwaveOS);
     [~, locAwaveOS] = max(locAwaveOS);
-    locAwaveOS = locsNegOS(locAwaveOS);
+    baselineOS = find(TimeOS(locsNegOS) < 0);
+    baselineOS = baselineOS(end);
+    locAwaveOS = locsNegOS(plus(locAwaveOS, baselineOS));
     
     locDwaveOS = TimeOS(locsPosOS) > 200 & TimeOS(locsPosOS) < 300;
     locDwaveOS = pksPosOS(locDwaveOS);
