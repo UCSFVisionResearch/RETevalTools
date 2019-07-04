@@ -31,7 +31,7 @@ if ~isempty(TimeOD)
     
     % First calculate B wave as maximum positive peak
     pksBOD = times(pksPosOD, (TimeOD(locsPosOD) < 100));
-    [ValueBwaveOD, locBwaveOD] = max(pksBOD);
+    [~, locBwaveOD] = max(pksBOD);
     locBwaveOD = locsPosOD(locBwaveOD);
     
     % Calculate A wave as the first negative peak prior to B wave
@@ -40,15 +40,15 @@ if ~isempty(TimeOD)
     [~, locAwaveOD] = max(locAwaveOD);
     locAwaveOD = locsNegOD(locAwaveOD);
     
-    % Calculate the B wave for the second flash.
-    %First find the largest Neg wave, and then create set from there
-    PostBwaveOD = TimeOD(locsNegOD) > TimeOD(locBwaveOD);
-    PostBwaveOD = times(PostBwaveOD, pksNegOD);
-    [~, PostBwaveOD] = max(PostBwaveOD);
-    locDwaveOD = TimeOD(locsPosOD) > TimeOD(locsNegOD(PostBwaveOD)) & TimeOD(locsPosOD) < 300;
-    locDwaveOD = times(locDwaveOD, pksPosOD);
+    % Calculate the D wave. look after signal is off from 200 ms
+    %locDwaveOD = TimeOD(locsPosOD) > TimeOD(locsNegOD(PostBwaveOD)) & TimeOD(locsPosOD) < 300;
+    locDwaveOD = TimeOD(locsPosOD) > 200 & TimeOD(locsPosOD) < 300;
+    locDwaveOD = pksPosOD(locDwaveOD);  
     [~, locDwaveOD] = max(locDwaveOD);
-    locDwaveOD = locsPosOD(locDwaveOD);
+    baselineOD = find(TimeOD(locsPosOD) < 200);
+    baselineOD = baselineOD(end);
+    locDwaveOD = locsPosOD(plus(locDwaveOD, baselineOD));
+
     % Calculate
     stimulusoffOD = TimeOD > 209.4 & TimeOD < 209.5;
     stimulusoffOD = times(stimulusoffOD, VoltOD);
@@ -76,14 +76,13 @@ if ~isempty(TimeOS)
     [~, locAwaveOS] = max(locAwaveOS);
     locAwaveOS = locsNegOS(locAwaveOS);
     
-    PostBwaveOS = TimeOS(locsNegOS) > TimeOS(locBwaveOS);
-    PostBwaveOS = times(PostBwaveOS, pksNegOS);
-    [~, PostBwaveOS] = max(PostBwaveOS);
-    locDwaveOS = TimeOS(locsPosOS) > TimeOS(locsNegOS(PostBwaveOS)) & TimeOS(locsPosOS) < 300;
-    locDwaveOS = times(locDwaveOS, pksPosOS);
+    locDwaveOS = TimeOS(locsPosOS) > 200 & TimeOS(locsPosOS) < 300;
+    locDwaveOS = pksPosOS(locDwaveOS);
     [~, locDwaveOS] = max(locDwaveOS);
-    locDwaveOS = locsPosOS(locDwaveOS);
-    
+    baselineOS = find(TimeOS(locsPosOS) < 200);
+    baselineOS = baselineOS(end);
+    locDwaveOS = locsPosOS(plus(locDwaveOS, baselineOS));
+
     % Calculate
     stimulusoffOS = TimeOS > 209.4 & TimeOS < 209.5;
     stimulusoffOS = times(stimulusoffOS, VoltOS);
@@ -173,7 +172,7 @@ if exist('PlotAndSave', 'var') && PlotAndSave
         ylabel('Amplitude (microV)');
     end
     
-    %
+ %%   %
     [filepath,name,ext] = fileparts(filename);
     print([filepath filesep name '-plot.pdf'],'-dpdf','-fillpage');
     save([filepath filesep name '-data.mat'], 'OD',  'OS');
