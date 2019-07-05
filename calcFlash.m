@@ -63,17 +63,6 @@ if ~isempty(TimeOS)
     BtimeOS = TimeOS(locBwaveOS);
 end 
 
-% Calculate
-AwaveOD = -VoltOD(locAwaveOD);
-BwaveOD = plus(VoltOD(locBwaveOD), AwaveOD);
-AwaveOS = -VoltOS(locAwaveOS);
-BwaveOS = plus(VoltOS(locBwaveOS), AwaveOS);
-
-AtimeOD = TimeOD(locAwaveOD);
-BtimeOD = TimeOD(locBwaveOD);
-AtimeOS = TimeOS(locAwaveOS);
-BtimeOS = TimeOS(locBwaveOS);
-
 if ~isempty(TimeOD)
     OD          = struct;
     OD.Time     = TimeOD;
