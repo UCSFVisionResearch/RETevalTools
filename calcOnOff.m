@@ -55,8 +55,9 @@ if ~isempty(TimeOD)
     locDwaveOD = locsPosOD(plus(locDwaveOD, baselineOD));
 
     % Calculate
-    stimulusoffOD = TimeOD > 209.4 & TimeOD < 209.5;
-    stimulusoffOD = times(stimulusoffOD, VoltOD);
+    stimulusoffOD = TimeOD > 209.408;
+    stimulusoffOD = VoltOD(stimulusoffOD);
+    stimulusoffOD = stimulusoffOD(1);
     
     AwaveOD = -VoltOD(locAwaveOD);
     BwaveOD = plus(VoltOD(locBwaveOD), AwaveOD);
@@ -94,8 +95,9 @@ if ~isempty(TimeOS)
     locDwaveOS = locsPosOS(plus(locDwaveOS, baselineOS));
 
     % Calculate
-    stimulusoffOS = TimeOS > 209.4 & TimeOS < 209.5;
-    stimulusoffOS = times(stimulusoffOS, VoltOS);
+    stimulusoffOS = TimeOS > 209.408;
+    stimulusoffOS = VoltOS(stimulusoffOS);
+    stimulusoffOS = stimulusoffOS(1);
     
     AwaveOS = -VoltOS(locAwaveOS);
     BwaveOS = plus(VoltOS(locBwaveOS), AwaveOS);
