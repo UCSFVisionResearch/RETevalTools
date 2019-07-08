@@ -49,7 +49,7 @@ if ~isempty(TimeOD)
     AwaveOD = -VoltOD(locAwaveOD);
     BwaveOD = plus(VoltOD(locBwaveOD), AwaveOD);
     BTOD = -VoltOD(locMinwaveOD);
-    PTOD = plus(BwaveOD, BTOD);
+    PTOD = plus(VoltOD(locBwaveOD), BTOD);
     RatioPHNROD = PTOD/BwaveOD;
     AtimeOD     = TimeOD(locAwaveOD);
     BtimeOD     = TimeOD(locBwaveOD);
@@ -76,7 +76,7 @@ if ~isempty(TimeOS)
     AwaveOS = -VoltOS(locAwaveOS);
     BwaveOS = plus(VoltOS(locBwaveOS), AwaveOS);
     BTOS = -VoltOS(locMinwaveOS);
-    PTOS = plus(BwaveOS, BTOS);
+    PTOS = plus(VoltOS(locBwaveOS), BTOS);
     RatioPHNROS = PTOS/BwaveOS;
     AtimeOS     = TimeOS(locAwaveOS);
     BtimeOS     = TimeOS(locBwaveOS);
