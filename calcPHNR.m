@@ -39,12 +39,13 @@ if ~isempty(TimeOD)
     locAwaveOD = find(locAwaveOD, 1, 'last' );
     locAwaveOD = locsNegOD(locAwaveOD);
     
-    % Calculate PHNR. Most minimum peak after first trough from B wave
+    %% Calculate PHNR. Most minimum peak after first trough from B wave
     MinwaveOD = TimeOD(locsNegOD) > TimeOD(locBwaveOD) & TimeOD(locsNegOD) < 100;
+    BaselineOD = find(MinwaveOD,1);
     MinwaveOD(find(MinwaveOD,1)) = 0;
-    MinwaveOD = times(MinwaveOD, pksNegOD);
-    [ValueMinwaveOD, locMinwaveOD] = max(MinwaveOD);
-    locMinwaveOD = locsNegOD(locMinwaveOD);
+    MinwaveOD = pksNegOD(MinwaveOD);
+    [~, locMinwaveOD] = max(MinwaveOD);
+    locMinwaveOD = locsNegOD(plus(locMinwaveOD, BaselineOD));
     % Calculate
     AwaveOD = -VoltOD(locAwaveOD);
     BwaveOD = plus(VoltOD(locBwaveOD), AwaveOD);
@@ -68,10 +69,11 @@ if ~isempty(TimeOS)
     locAwaveOS = locsNegOS(locAwaveOS);
     
     MinwaveOS = TimeOS(locsNegOS) > TimeOS(locBwaveOS) & TimeOS(locsNegOS) < 100;
+    BaselineOS = find(MinwaveOS,1);
     MinwaveOS(find(MinwaveOS,1)) = 0;
-    MinwaveOS = times(MinwaveOS, pksNegOS);
-    [ValueMinwaveOS, locMinwaveOS] = max(MinwaveOS);
-    locMinwaveOS = locsNegOS(locMinwaveOS);
+    MinwaveOS = pksNegOS(MinwaveOS);
+    [~, locMinwaveOS] = max(MinwaveOS);
+    locMinwaveOS = locsNegOS(plus(locMinwaveOS, BaselineOS));
     % Calculate
     AwaveOS = -VoltOS(locAwaveOS);
     BwaveOS = plus(VoltOS(locBwaveOS), AwaveOS);
@@ -137,7 +139,7 @@ else
     OS.PHNRtime = 0;
 end
 
-% Graph PHNR
+%% Graph PHNR
 if exist('PlotAndSave', 'var') && PlotAndSave
     figure('Name', 'Frequency Response Profile', 'visible', 'on'); hold on;
     subplot(2,1,1)
@@ -166,7 +168,7 @@ if exist('PlotAndSave', 'var') && PlotAndSave
         ylabel('Amplitude (microV)');
     end
     
-    % Print PHNR
+    %% Print PHNR
     [filepath,name,~] = fileparts(filename);
     print([filepath filesep name '-PHNRplot.pdf'],'-dpdf','-fillpage');
     save([filepath filesep name '-PHNRdata.mat'], 'OD','OS');

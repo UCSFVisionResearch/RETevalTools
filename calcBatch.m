@@ -42,9 +42,9 @@ for i = 1:numel(lstData)
             Flicker = FlickerOD;
             PhNR    = PhNROD;
             if isempty(tblDataFlash)
-                tblDataFlash = table({fName}, {'OD'}, {'Flash'}, Flash.Awave, Flash.Atime, Flash.Bwave, Flash.Btime, {'Flicker'}, Flicker.AmpAvg, Flicker.AmpFFT, {'PhNR'}, PhNR.BT, PhNR.PT, PhNR.RatioPHNR, 'VariableNames', {'FileName', 'Eye', 'Stim1', 'Awave', 'Atime', 'Bwave', 'Btime', 'Stim2', 'AmpAvg', 'AmpFFT', 'Stim3', 'BT', 'PT', 'RatioPhNR'});
+                tblDataFlash = table({fName}, {'OD'}, {'Flash'}, Flash.Awave, Flash.Atime, Flash.Bwave, Flash.Btime, {'Flicker'}, Flicker.AmpAvg, Flicker.AmpFFT, {'PhNR'}, PhNR.BT, PhNR.PT, PhNR.PHNRtime, PhNR.RatioPHNR, 'VariableNames', {'FileName', 'Eye', 'Stim1', 'Awave', 'Atime', 'Bwave', 'Btime', 'Stim2', 'AmpAvg', 'AmpFFT', 'Stim3', 'BT', 'PT', 'PhNRtime', 'RatioPhNR'});
             else
-                tblDataFlash = [tblDataFlash; table({fName}, {'OD'}, {'Flash'}, Flash.Awave, Flash.Atime, Flash.Bwave, Flash.Btime, {'Flicker'}, Flicker.AmpAvg, Flicker.AmpFFT, {'PhNR'}, PhNR.BT, PhNR.PT, PhNR.RatioPHNR, 'VariableNames', {'FileName', 'Eye', 'Stim1', 'Awave', 'Atime', 'Bwave', 'Btime', 'Stim2', 'AmpAvg', 'AmpFFT', 'Stim3', 'BT', 'PT', 'RatioPhNR'})]; %#ok
+                tblDataFlash = [tblDataFlash; table({fName}, {'OD'}, {'Flash'}, Flash.Awave, Flash.Atime, Flash.Bwave, Flash.Btime, {'Flicker'}, Flicker.AmpAvg, Flicker.AmpFFT, {'PhNR'}, PhNR.BT, PhNR.PT, PhNR.PHNRtime, PhNR.RatioPHNR, 'VariableNames', {'FileName', 'Eye', 'Stim1', 'Awave', 'Atime', 'Bwave', 'Btime', 'Stim2', 'AmpAvg', 'AmpFFT', 'Stim3', 'BT', 'PT','PhNRtime', 'RatioPhNR'})]; %#ok
             end
         end
         if ~isempty(FlashOS)
@@ -52,9 +52,9 @@ for i = 1:numel(lstData)
             Flicker = FlickerOS;
             PhNR    = PhNROS;
             if isempty(tblDataFlash)
-                tblDataFlash = table({fName}, {'OS'}, {'Flash'}, Flash.Awave, Flash.Atime, Flash.Bwave, Flash.Btime, {'Flicker'}, Flicker.AmpAvg, Flicker.AmpFFT, {'PhNR'}, PhNR.BT, PhNR.PT, PhNR.RatioPHNR, 'VariableNames', {'FileName', 'Eye', 'Stim1', 'Awave', 'Atime', 'Bwave', 'Btime', 'Stim2', 'AmpAvg', 'AmpFFT', 'Stim3', 'BT', 'PT', 'RatioPhNR'});
+                tblDataFlash = table({fName}, {'OS'}, {'Flash'}, Flash.Awave, Flash.Atime, Flash.Bwave, Flash.Btime, {'Flicker'}, Flicker.AmpAvg, Flicker.AmpFFT, {'PhNR'}, PhNR.BT, PhNR.PT, PhNR.PHNRtime, PhNR.RatioPHNR, 'VariableNames', {'FileName', 'Eye', 'Stim1', 'Awave', 'Atime', 'Bwave', 'Btime', 'Stim2', 'AmpAvg', 'AmpFFT', 'Stim3', 'BT', 'PT', 'PhNRtime', 'RatioPhNR'});
             else
-                tblDataFlash = [tblDataFlash; table({fName}, {'OS'}, {'Flash'}, Flash.Awave, Flash.Atime, Flash.Bwave, Flash.Btime, {'Flicker'}, Flicker.AmpAvg, Flicker.AmpFFT, {'PhNR'}, PhNR.BT, PhNR.PT, PhNR.RatioPHNR, 'VariableNames', {'FileName', 'Eye', 'Stim1', 'Awave', 'Atime', 'Bwave', 'Btime', 'Stim2', 'AmpAvg', 'AmpFFT', 'Stim3', 'BT', 'PT', 'RatioPhNR'})]; %#ok
+                tblDataFlash = [tblDataFlash; table({fName}, {'OS'}, {'Flash'}, Flash.Awave, Flash.Atime, Flash.Bwave, Flash.Btime, {'Flicker'}, Flicker.AmpAvg, Flicker.AmpFFT, {'PhNR'}, PhNR.BT, PhNR.PT, PhNR.PHNRtime, PhNR.RatioPHNR, 'VariableNames', {'FileName', 'Eye', 'Stim1', 'Awave', 'Atime', 'Bwave', 'Btime', 'Stim2', 'AmpAvg', 'AmpFFT', 'Stim3', 'BT', 'PT', 'PhNRtime', 'RatioPhNR'})]; %#ok
             end
         end
     elseif contains(filename, 'ON-OFF')
